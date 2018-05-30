@@ -68,7 +68,44 @@ namespace crop_join
             }
             //return img;
         }
-        public static Image removeimgpartially(Image[] imgarray, int r, int c, int d)
+        public static Image creategrid(int h, int w, int hn, int wn)
+        {
+            Bitmap img = new Bitmap(w+2,h+2);
+            var graphics2 = Graphics.FromImage(img);
+            Pen p = new Pen(Color.Red);
+            for (int i = 0; i<=hn; i++)
+            {
+                int h1 = i * (h / hn);
+                graphics2.DrawLine(p,0,h1,w,h1);
+            }
+            for (int i = 0; i <=wn; i++)
+            {
+                int w1 = i * (w / wn);
+                graphics2.DrawLine(p, w1, 0, w1, h);
+            }
+            return img;
+
+        }
+        public static void addimg(Image wholeimg, Image img,int imgidx, int h, int w, int hn, int wn)
+        {
+            //Bitmap wholeimg = new Bitmap(w + 2, h + 2);
+            int hpos = 0;
+            int wpos = 0;
+            int h1 = h / hn;
+            int w1 = w / wn;
+            if (imgidx != 0)
+            {
+                hpos = h1 * (int)(imgidx/hn);
+                wpos = w1 * (int)(imgidx % wn);
+            }
+            
+            
+            var graphics2 = Graphics.FromImage(wholeimg);
+            //graphics2.DrawImage(img, new Rectangle(wpos+1,hpos+1, w1-2, h1-2), new Rectangle(0, 0, w1-2, h1-2), GraphicsUnit.Pixel);
+            graphics2.DrawImage(img, new Rectangle(wpos+1,hpos+1, w1-2, h1-2), new Rectangle(0, 0, img.Width,img.Width), GraphicsUnit.Pixel);
+            //return wholeimg; 
+        }
+        public static Image removeimgpartially(Image[] imgarray, int r, int c,int d)
         {
             Bitmap imgrnd;
             if (r > 0 && c > 0 && imgarray.Length == r * c)
@@ -79,7 +116,7 @@ namespace crop_join
                 int h = h1 * r;
                 int showimgcount = (r * c / d);
                 //Debug.Print(String.Format("w: {0} h: {1} w1:{2} h1:{3}", w,h,w1,h1));
-                int[] randidx = getrandomnumber(r * c - 1, showimgcount);
+                int[] randidx = getrandomnumber(r*c-1,showimgcount);
                 imgrnd = new Bitmap(w, h);
                 var graphics2 = Graphics.FromImage(imgrnd);
                 int index = 0;
@@ -89,17 +126,17 @@ namespace crop_join
                     {
                         //var index = listofindex[rndidx];
                         //Debug.Print("Index: " + index);
-                        bool match = false;
-                        foreach (int k in randidx)
+                        bool match = false; 
+                        foreach(int k in randidx)
                         {
                             if (k == index)
                             {
-                                match = true;
+                                match = true; 
                             }
                         }
                         if (match)
                         {
-                            graphics2.DrawImage(imgarray[index], new Rectangle(i * w1, j * h1, w1, h1), new Rectangle(0, 0, w1, h1), GraphicsUnit.Pixel);
+                          graphics2.DrawImage(imgarray[index], new Rectangle(i * w1, j * h1, w1, h1), new Rectangle(0, 0, w1, h1), GraphicsUnit.Pixel);
                         }
                         index++;
                     }
@@ -211,7 +248,7 @@ namespace crop_join
             Random rnd = new Random();
             while (n > 1)
             {
-                int k = (rnd.Next(0, n-1) % n);
+                int k = (rnd.Next(0, n) % n);
                 n--;
                 Image t = imgarray[k];
                 imgarray[k] = imgarray[n];
@@ -219,15 +256,33 @@ namespace crop_join
             }
             //return outimgarr;
         }
-        private static int[] getrandomnumber(int maxval, int retcount)
+        public static void shuffle(int[] intinput)
+        {
+            int n = intinput.Count();
+            int[] outimgarr = new int[n];
+            //outimgarr = imgarray;
+            Random rnd = new Random();
+            while (n > 1)
+            {
+                int k = (rnd.Next(0, n-1) % n);
+                n--;
+                int t = intinput[k];
+                intinput[k] = intinput[n];
+                intinput[n] = t;
+            }
+            //return outimgarr;
+        }
+        public static int[] getrandomnumber(int maxval, int retcount)
+
         {
             int[] retval = new int[retcount];
-            Random rnd = new Random();
+            int[] intarr    = Enumerable.Range(0, maxval + 1).ToArray();
+            shuffle(intarr);
+            //int[] retval = new int[retcount];
+            //Random rnd = new Random();
             for (int i =0; i<retcount; i++)
             {
-                int k = (rnd.Next(0, maxval) % maxval);
-                maxval--;
-                retval[i] = k;
+                retval[i] = intarr[i];
             }
             return retval;
         }
