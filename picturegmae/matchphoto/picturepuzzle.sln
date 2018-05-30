@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "picturepuzzle", "picturepuzzle\picturepuzzle.csproj", "{57150CCE-C802-43F7-BF5D-FE79D172FF55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "crop_join", "crop_join\crop_join.csproj", "{8B37C626-BBC4-438B-85BB-0515E06129DC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{57150CCE-C802-43F7-BF5D-FE79D172FF55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57150CCE-C802-43F7-BF5D-FE79D172FF55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57150CCE-C802-43F7-BF5D-FE79D172FF55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57150CCE-C802-43F7-BF5D-FE79D172FF55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B37C626-BBC4-438B-85BB-0515E06129DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B37C626-BBC4-438B-85BB-0515E06129DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B37C626-BBC4-438B-85BB-0515E06129DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B37C626-BBC4-438B-85BB-0515E06129DC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
