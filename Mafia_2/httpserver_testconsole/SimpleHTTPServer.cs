@@ -41,7 +41,6 @@ namespace httpserver_testconsole
         public delegate void clientMSGRcv(object sender, clientmessageevent e);
         public event clientMSGRcv onRcvMSG;
         public static bool night = false;
-        public static bool idchk = true;
         public int Port
         {
             get { return _port; }
@@ -116,11 +115,7 @@ namespace httpserver_testconsole
                 try
                 {
                     HttpListenerContext context = _listener.GetContext();
-                    if (idchk)
-                        ProcessIDChk(context);
-                    else
-                        Process(context);
-
+                    Process(context);
 
                 }
                 catch (Exception)
@@ -129,7 +124,7 @@ namespace httpserver_testconsole
                 }
             }
         }
-        private void addPlayer(string ip, string id,string port)
+        private void addPlayer(string ip, string id)
         {
 
             bool a = true;
@@ -153,44 +148,12 @@ namespace httpserver_testconsole
             }
         }
         private clientmessageevent args;
-        private void ProcessIDChk(HttpListenerContext context)
-        {
-            string ipa = context.Request.RemoteEndPoint.Address.ToString();
-            string port = context.Request.RemoteEndPoint.Port.ToString();
-            string idpart = "your ip: "+ipa+ " port: "+port;
-            try
-            {
-                indexfile = indexfileorigin.Replace("##id##", idpart);
-                //Adding permanent http response headers
-
-
-                //context.Response.ContentType = _mimeTypeMappings.TryGetValue(Path.GetExtension(filename), out mime) ? mime : "application/octet-stream";
-                //context.Response.ContentLength64 = input.Length;
-                context.Response.AddHeader("Date", DateTime.Now.ToString("r"));
-                //context.Response.AddHeader("Last-Modified", System.IO.File.GetLastWriteTime(filename).ToString("r"));
-
-                byte[] buffer = new byte[1024 * 16];
-                buffer = Encoding.ASCII.GetBytes(indexfile);
-                int nbytes = buffer.Count();
-                //while ((nbytes = input.Read(buffer, 0, buffer.Length)) > 0)
-                context.Response.OutputStream.Write(buffer, 0, nbytes);
-                //input.Close();
-
-                context.Response.StatusCode = (int)HttpStatusCode.OK;
-                context.Response.OutputStream.Flush();
-            }
-            catch (Exception)
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            }
-        }
         private void Process(HttpListenerContext context)
         {
             lg.inf("Process.." + "IP: " + context.Request.RemoteEndPoint.Address);
             //string reply = "";
             string ipa = context.Request.RemoteEndPoint.Address.ToString(); 
-            string port = context.Request.RemoteEndPoint.Port.ToString();
-            Debug.Print("Process.... " + "IP: " + context.Request.RemoteEndPoint.Address +" PORT: "+ context.Request.RemoteEndPoint.Port);
+            Debug.Print("Process.... " + "IP: " + context.Request.RemoteEndPoint.Address);
             Players p = null;
             string plist = "";
             foreach (Players pl in allplayers)
@@ -294,7 +257,7 @@ namespace httpserver_testconsole
                 }
                 if (!registered)
                 {
-                    addPlayer(ipa, id,port);
+                    addPlayer(ipa, id);
                     string msg = string.Format("Register-  Name: " + idname + " IP: " + ipa + "    ID: " + id);
                     args = new clientmessageevent(msg);
                     onRcvMSG(this, args);
@@ -347,7 +310,7 @@ namespace httpserver_testconsole
                 {
                     string rolemsg = p.idmsg;
                     idpart = string.Format("You are registered as ID: {0} Name: {1}<BR>{2}", p.clid, p.name, p.idmsg);
-                    if ((p.reply != "") && (!night))
+                    if ((p.reply != "") )
                     {
                         rpl = p.reply;
                     }

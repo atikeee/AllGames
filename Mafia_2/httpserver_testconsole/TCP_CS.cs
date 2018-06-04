@@ -89,14 +89,17 @@ namespace httpserver_testconsole
                 //pl.registered = true;
                 if(resetstat)
                     pl.stat = true;
-                pl.statnight = 0;
+                pl.statnight = false;
                 if (resetid)
                     pl.clid = -1;
+                pl.reply = "";
+                
             }
             Players.killmafia = -1;
             Players.killwitch = -1;
             Players.savedoc = -1;
             Players.savewitch = -1;
+            
         }
         public void startthegame()
         {
@@ -139,13 +142,21 @@ namespace httpserver_testconsole
             {
                 idrole.Add(id, playerroles[ind]);
                 lg.deb(string.Format("id: {0} role: {1} ",id,playerroles[ind]));
+
                 ind++;
             }
             // Assign roles to player. 
             Players.idvschar = idrole;
-            foreach(KeyValuePair<int,string> kvp in idrole)
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"playerrole"))
             {
-                lg.inf(string.Format("Player Role: {0} {1}", kvp.Key.ToString(),kvp.Value));
+                foreach(KeyValuePair<int,string> kvp in idrole)
+                {
+                    lg.inf(string.Format("Player Role: {0} {1}", kvp.Key.ToString(),kvp.Value));
+
+             
+                        file.WriteLine(Players.idvsname[kvp.Key.ToString()]+" => "+ kvp.Value);
+                }
+
             }
 
             publishidinfo();

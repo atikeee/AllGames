@@ -13,16 +13,13 @@ namespace httpserver_testconsole
         //public string replymsg = "";
         public bool stat = true; // true means alive.
         public string clIP;
-        public string port=""; 
-        public int statnight = 0;// track number of message recieved.. 
+        public bool statnight = false;// track number of message recieved.. 
         public int clid = -1;
         public string name = "NA";
         //public int destclid = -1;
         public string role = "NA";
         public static Dictionary<int, string> idvschar;
         public static Dictionary<string, string> idvsname;
-        public static Dictionary<string, string> idvsip;
-        public static Dictionary<string, string> idvsport;
         //NetworkStream netStream;
         //private Thread readThread;
         // private bool activestate = true; 
@@ -86,10 +83,11 @@ namespace httpserver_testconsole
         //public static string mafiareply = "";
         public void processdata(int dest,string op)
         {
-            
-            statnight++;
-            string detectivereply = idvsname[dest.ToString()] + " is NOT MAFIA";
-            string minionreply = idvsname[dest.ToString()] + "is NOT Detective";
+
+            string detectivereply = "";
+            string minionreply = "";
+            detectivereply = idvsname[dest.ToString()] + " is NOT MAFIA";
+            minionreply = idvsname[dest.ToString()] + "is NOT Detective";
             int magician = -1;
             List<int> allmaf = new List<int>();
             List<int> allmas = new List<int>();
@@ -131,31 +129,24 @@ namespace httpserver_testconsole
                 {
                     killmafia = dest;
                 }
-                statnight = 3;
             }
             else if (role == "DETECTIVE")
             {
 
                 //writeData(detectivereply);
-                statnight = 3;
-                if(SimpleHTTPServer.night)
-                reply = detectivemsg +"<BR>"+detectivereply;
+                if((SimpleHTTPServer.night)&&(!statnight))
+                    reply = detectivemsg +"<BR>"+detectivereply;
                 
             }
             else if (role == "MINION")
             {
                 //writeData(minionreply);
-                statnight = 3;
-                if (SimpleHTTPServer.night)
-
+                if ((SimpleHTTPServer.night)&&(!statnight))
                     reply = minionmsg + "<BR>" + minionreply;
-
             }
             else if (role == "DOCTOR")
             {
                 savedoc = clid;
-                statnight = 3;
-
             }
             else if (role == "WITCH")
             {
@@ -169,7 +160,6 @@ namespace httpserver_testconsole
                 {
                     killwitch = dest;
                 }
-                statnight = 3;
 
             }
             else if (role == "MASON")
@@ -180,11 +170,11 @@ namespace httpserver_testconsole
                     //writeDataToOther(msg, im);
                 }
             }
-
             else
             {
 
             }
+            statnight = true;
             lg.inf(string.Format("Processing Data: INPUT- {0} {1} OUTPUT- {2}", dest.ToString(), op,reply));
         }
         

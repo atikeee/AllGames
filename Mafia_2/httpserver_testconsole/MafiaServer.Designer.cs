@@ -37,7 +37,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.textBoxReport = new System.Windows.Forms.TextBox();
             this.buttonend = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -134,24 +133,13 @@
             this.buttonend.TabIndex = 17;
             this.buttonend.Text = "END";
             this.buttonend.UseVisualStyleBackColor = true;
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(12, 73);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(76, 17);
-            this.checkBox1.TabIndex = 18;
-            this.checkBox1.Text = "ID CHECK";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.buttonend.Click += new System.EventHandler(this.buttonend_Click);
             // 
             // MafiaServer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(944, 691);
-            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.buttonend);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.btnday);
@@ -181,6 +169,5 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TextBox textBoxReport;
         private System.Windows.Forms.Button buttonend;
-        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

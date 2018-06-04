@@ -56,6 +56,7 @@ namespace httpserver_testconsole
             tcpcs.startthegame();
             SimpleHTTPServer.registered = true;
             btn_start.Enabled = false;
+            
         }
 
         private void btn_nightstart_Click(object sender, EventArgs e)
@@ -63,12 +64,14 @@ namespace httpserver_testconsole
             sessioncount++;
             // this =1 means first night. 
             lg.inf("Night start");
+            foreach (Players pl in tcpcs.allplayers)
+                pl.statnight = false;
             SimpleHTTPServer.night = true;
             Players.killmafia = -1;
             Players.killwitch = -1;
             Players.savedoc = -1;
             Players.savewitch = -1;
-
+            
             btn_nightend.Enabled = true;
             btn_nightstart.Enabled = false;
             //temp code. 
@@ -86,7 +89,7 @@ namespace httpserver_testconsole
             foreach (Players pl in tcpcs.allplayers)
             {
                 if ((pl.clid > 0) && (pl.stat))
-                    if (pl.statnight < 3)
+                    if (!pl.statnight)
                     {
                         MessageBox.Show("("+pl.clid+") "+pl.name + " is not ready");
                         playerready = false;
@@ -348,12 +351,9 @@ namespace httpserver_testconsole
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void buttonend_Click(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
-                SimpleHTTPServer.idchk = true;
-            else
-                SimpleHTTPServer.idchk = false;
+
         }
     }
 }
