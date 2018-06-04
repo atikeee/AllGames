@@ -65,6 +65,7 @@
   <ItemGroup>
     <None Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="playername.conf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

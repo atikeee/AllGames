@@ -60,6 +60,8 @@ namespace httpserver_testconsole
         public Dictionary<string, string> refreshplayer()
         {
             Dictionary<string, string> activeplayerdic = new Dictionary<string, string>();
+            activeplayers.Clear();
+            activeplayerdic.Clear();
             foreach (Players pl in allplayers)
             {
                 //MessageBox.Show(hcl.clid.ToString());
@@ -80,12 +82,13 @@ namespace httpserver_testconsole
         //    }
         //}
 
-        public void initializeplayer(bool resetid = false)
+        public void initializeplayer(bool resetid = false, bool resetstat = true)
         {
             foreach (Players pl in allplayers)
             {
                 //pl.registered = true;
-                pl.stat = true;
+                if(resetstat)
+                    pl.stat = true;
                 pl.statnight = 0;
                 if (resetid)
                     pl.clid = -1;
@@ -131,6 +134,7 @@ namespace httpserver_testconsole
                 playerroles[randidx] = tempstr;
             }
             ind = 0;
+            idrole.Clear();
             foreach (int id in activeplayers)
             {
                 idrole.Add(id, playerroles[ind]);

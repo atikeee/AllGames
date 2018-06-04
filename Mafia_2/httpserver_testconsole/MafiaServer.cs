@@ -81,14 +81,14 @@ namespace httpserver_testconsole
         {
             lg.inf("Night End");
             SimpleHTTPServer.night = false;
-            Players.mafiareply = "";
+            //Players.mafiareply = "";
             bool playerready = true;
             foreach (Players pl in tcpcs.allplayers)
             {
                 if ((pl.clid > 0) && (pl.stat))
                     if (pl.statnight < 3)
                     {
-                        MessageBox.Show(pl.clid + " is not ready");
+                        MessageBox.Show("("+pl.clid+") "+pl.name + " is not ready");
                         playerready = false;
                     }
             }
@@ -116,8 +116,39 @@ namespace httpserver_testconsole
                 }
                 btnday.Enabled = true;
             }
+            refreshbuttons();
         }
         private bool x;
+        private void refreshbuttons()
+        {
+            foreach (Players pl in tcpcs.allplayers)
+            {
+                string clid = pl.clid.ToString();
+                string clname = pl.name;
+                if (pl.clid > 0)
+
+                {
+                    Button btn = allbutton[pl.clid.ToString()];
+                    if (!pl.stat)
+                    //if(x)
+                    {
+                        btn.BackColor = Color.Red;
+                        btn.Update();
+                        groupBox1.Update();
+                        this.Update();
+
+                    }
+                    else
+                    {
+                        btn.BackColor = Color.Green;
+                        btn.Update();
+                        groupBox1.Update();
+                        this.Update();
+                    }
+                }
+            }
+
+        }
         private Dictionary<string, Button> allbutton = new Dictionary<string, Button>();
         private void btn_refresh_Click(object sender, EventArgs e)
         {
@@ -149,6 +180,7 @@ namespace httpserver_testconsole
                     else
                     {
                         btn = new Button();
+                        allbutton.Add(pl.clid.ToString(),btn);
                         btn.Font = new Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                         btn.Location = new Point(40 + (cn % 2 * 120), 10 + (cn / 2) * 60);
                         btn.Name = "btn_" + clid;
@@ -159,8 +191,8 @@ namespace httpserver_testconsole
                         btn.BackColor = Color.LightGreen;
                     }
                     
-                    //if (!pl.stat)
-                    if(x)
+                    if (!pl.stat)
+                    //if(x)
                     {
                         btn.BackColor = Color.Red;
                         btn.Update();
@@ -168,7 +200,15 @@ namespace httpserver_testconsole
                         this.Update();
 
                     }
+                    else
+                    {
+                        btn.BackColor = Color.Green;
+                        btn.Update();
+                        groupBox1.Update();
+                        this.Update();
+                    }
                         x=true;
+                    
                     groupBox1.Controls.Add(btn);
                 }
                 //btn.Click += new System.EventHandler(this.btn_start_Click);
@@ -196,6 +236,7 @@ namespace httpserver_testconsole
         {
             btnday.Enabled = false;
             //btn_nightstart.Enabled = true;
+            tcpcs.initializeplayer(false,false);
             btn_refresh.Enabled = true;
             lg.inf("killed by villager");
             foreach (Players hcl in tcpcs.allplayers)
@@ -215,7 +256,9 @@ namespace httpserver_testconsole
                 MessageBox.Show("GAME OVER. EVIL Team WINS");
                 btn_start.Enabled = true;
             }
-
+            refreshbuttons();
+            btn_nightstart.Enabled = true;
+            btnday.Enabled = false;
         }
         private SimpleHTTPServer myServer;
         private void MafiaServer_Load(object sender, EventArgs e)
@@ -290,6 +333,27 @@ namespace httpserver_testconsole
             myServer.Stop();
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogResult = MessageBox.Show("Sure", "Some Title", MessageBoxButtons.YesNoCancel);
+            if (dialogResult == DialogResult.Yes)
+            {
+                //do something
+                Debug.Print("yesss");
+            }
+            else if (dialogResult == DialogResult.No)
+            {
+                Debug.Print("Nuoooo");
+                //do something else
+            }
+        }
 
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+                SimpleHTTPServer.idchk = true;
+            else
+                SimpleHTTPServer.idchk = false;
+        }
     }
 }

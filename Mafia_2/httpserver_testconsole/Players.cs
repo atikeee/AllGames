@@ -13,6 +13,7 @@ namespace httpserver_testconsole
         //public string replymsg = "";
         public bool stat = true; // true means alive.
         public string clIP;
+        public string port=""; 
         public int statnight = 0;// track number of message recieved.. 
         public int clid = -1;
         public string name = "NA";
@@ -20,6 +21,8 @@ namespace httpserver_testconsole
         public string role = "NA";
         public static Dictionary<int, string> idvschar;
         public static Dictionary<string, string> idvsname;
+        public static Dictionary<string, string> idvsip;
+        public static Dictionary<string, string> idvsport;
         //NetworkStream netStream;
         //private Thread readThread;
         // private bool activestate = true; 
@@ -29,6 +32,9 @@ namespace httpserver_testconsole
         public static int killwitch = -1;
         public static int savedoc = -1;
         public static int savewitch = -1;
+        private static string mafiamsg = "";
+        private static string detectivemsg = "";
+        private static string minionmsg = "";
         //public static Dictionary<int, NetworkStream> allstream = new Dictionary<int, NetworkStream>();
         // NetworkStream writeStream;
         // public void startClient(TcpClient inClientSocket, string clientip)
@@ -77,13 +83,13 @@ namespace httpserver_testconsole
             this.lg = lg;
         }
         public string reply="";
-        public static string mafiareply = "";
+        //public static string mafiareply = "";
         public void processdata(int dest,string op)
         {
             
             statnight++;
-            string detectivereply = "NO";
-            string minionreply = "NO";
+            string detectivereply = idvsname[dest.ToString()] + " is NOT MAFIA";
+            string minionreply = idvsname[dest.ToString()] + "is NOT Detective";
             int magician = -1;
             List<int> allmaf = new List<int>();
             List<int> allmas = new List<int>();
@@ -115,8 +121,8 @@ namespace httpserver_testconsole
             {
                 
                 string msg = idvsname[clid.ToString()] + " wants to kill " + idvsname[dest.ToString()] ;
-                mafiareply += msg + "<BR>";
-                reply = mafiareply;
+                mafiamsg += msg + "<BR>";
+                reply = mafiamsg;
                 if (dest == magician)
                 {
                     killmafia = clid;
@@ -129,10 +135,11 @@ namespace httpserver_testconsole
             }
             else if (role == "DETECTIVE")
             {
+
                 //writeData(detectivereply);
                 statnight = 3;
                 if(SimpleHTTPServer.night)
-                reply = detectivereply;
+                reply = detectivemsg +"<BR>"+detectivereply;
                 
             }
             else if (role == "MINION")
@@ -141,7 +148,7 @@ namespace httpserver_testconsole
                 statnight = 3;
                 if (SimpleHTTPServer.night)
 
-                    reply = minionreply;
+                    reply = minionmsg + "<BR>" + minionreply;
 
             }
             else if (role == "DOCTOR")
