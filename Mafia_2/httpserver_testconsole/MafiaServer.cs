@@ -157,7 +157,6 @@ namespace httpserver_testconsole
                         btn.Text = clid + ": " + clname;
                         btn.UseVisualStyleBackColor = true;
                         btn.BackColor = Color.LightGreen;
-                        btn.Click += new System.EventHandler(this.btn_click_event);
                     }
                     
                     //if (!pl.stat)
@@ -166,8 +165,8 @@ namespace httpserver_testconsole
                         btn.BackColor = Color.Red;
                         btn.Update();
                         groupBox1.Update();
-                        this.Refresh();
-                        this.Invalidate();
+                        this.Update();
+
                     }
                         x=true;
                     groupBox1.Controls.Add(btn);
