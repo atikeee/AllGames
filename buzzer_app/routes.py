@@ -1,4 +1,4 @@
-from flask import request, render_template, redirect, abort
+from flask import request, render_template, redirect, abort, send_from_directory
 from datetime import datetime
 from storage import buzzer_entries, name_locks
 import csv, os, re
@@ -149,7 +149,7 @@ def configure_routes(app):
         m = int(request.args.get("m", 4))
         n = int(request.args.get("n", 4))
         delay = int(request.args.get("delay", 2000))
-        folder = "static/photopair"
+        folder = "photopair"
         pairs = find_image_pairs(folder)
         needed = (m * n) // 2
         if len(pairs) < needed:
@@ -163,3 +163,8 @@ def configure_routes(app):
             random.shuffle(images)
 
         return render_template("photopair.html", m=m, n=n, delay=delay, images=images)
+    from flask import send_from_directory
+
+    @app.route('/photopair_images/<filename>')
+    def photopair_image(filename):
+        return send_from_directory("photopair", filename)
