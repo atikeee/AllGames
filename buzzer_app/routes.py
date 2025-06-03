@@ -1,11 +1,15 @@
-from flask import request, render_template, redirect
+from flask import request, render_template, redirect, abort
 from datetime import datetime
 from storage import buzzer_entries, name_locks
-import os
+import csv, os, re
 import random
 from PIL import Image
 from io import BytesIO
 import base64
+
+
+def is_request_from_localhost():
+    return request.remote_addr in ("127.0.0.1", "localhost", "::1")
 
 def scramble_image(image_path, n):
     image = Image.open(image_path)
@@ -27,6 +31,20 @@ def scramble_image(image_path, n):
     buf = BytesIO()
     new_img.save(buf, format='PNG')
     return base64.b64encode(buf.getvalue()).decode()
+
+def load_clips():
+    clips = []
+    with open("clips.csv", newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            url = row[0]
+            segments = [(int(row[i]), int(row[i+1])) for i in range(1, len(row), 2)]
+            clips.append({"url": url, "segments": segments})
+    return clips
+
+def extract_video_id(url):
+    match = re.search(r"v=([^&]+)", url)
+    return match.group(1) if match else None
 
 
 def configure_routes(app):
@@ -72,6 +90,8 @@ def configure_routes(app):
     
     @app.route('/photoscramble', methods=['GET', 'POST'])
     def photoscramble():
+        if not is_request_from_localhost():
+            abort(403)  # Forbidden
         photo_folder = 'photos'
         image_list = sorted([f for f in os.listdir(photo_folder) if f.lower().endswith(('png', 'jpg', 'jpeg'))])
         index = int(request.args.get('index', 0))
@@ -92,3 +112,25 @@ def configure_routes(app):
                                total=len(image_list),
                                has_prev=index > 0,
                                has_next=index < len(image_list) - 1)
+    @app.route('/guesstune')
+    def guesstune():
+        clips = load_clips()
+        clip_index = int(request.args.get("clip", 0))
+        segment_index = int(request.args.get("seg", 0))
+
+        clip_index = max(0, min(clip_index, len(clips) - 1))
+        segment_index = max(0, segment_index)
+
+        clip = clips[clip_index]
+        video_id = extract_video_id(clip["url"])
+        segments = clip["segments"]
+        segment = segments[segment_index % len(segments)]
+
+        return render_template("guesstune.html",
+                               video_id=video_id,
+                               start=segment[0],
+                               end=segment[1],
+                               clip_index=clip_index,
+                               segment_index=segment_index,
+                               total_clips=len(clips),
+                               total_segments=len(segments))

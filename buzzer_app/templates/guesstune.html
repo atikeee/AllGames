@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Guess Tune</title>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 2rem; text-align: center; }
+        iframe { margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <h2>🎵 Guess the Tune (Audio Only) 🎵</h2>
+    <div class="my-3">
+        <button class="btn btn-success" onclick="playSegment()">▶️ Play</button>
+        <button class="btn btn-danger" onclick="pauseVideo()">⏸️ Pause</button>
+    </div>
+
+    <div class="mt-2">
+        <a href="/guesstune?clip={{ clip_index - 1 }}&seg=0" class="btn btn-secondary {% if clip_index == 0 %}disabled{% endif %}">⬅️ Prev Clip</a>
+        <a href="/guesstune?clip={{ clip_index }}&seg={{ segment_index - 1 }}" class="btn btn-info {% if segment_index == 0 %}disabled{% endif %}">⬅️ Prev Segment</a>
+        <a href="/guesstune?clip={{ clip_index }}&seg={{ segment_index + 1 }}" class="btn btn-info {% if segment_index + 1 >= total_segments %}disabled{% endif %}">Next Segment ➡️</a>
+        <a href="/guesstune?clip={{ clip_index + 1 }}&seg=0" class="btn btn-secondary {% if clip_index + 1 >= total_clips %}disabled{% endif %}">Next Clip ➡️</a>
+ 
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let player;
+        let timer;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('yt-silent', {
+                videoId: '{{ video_id }}',
+                playerVars: {
+                    autoplay: 0,
+                    controls: 0,
+                    modestbranding: 1
+                }
+            });
+        }
+
+        function playSegment() {
+            if (player) {
+                player.seekTo({{ start }});
+                player.playVideo();
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    player.pauseVideo();
+                }, ({{ end }} - {{ start }}) * 1000);
+            }
+        }
+
+        function pauseVideo() {
+            if (player) {
+                player.pauseVideo();
+                clearTimeout(timer);
+            }
+        }
+    </script>
+
+    <!-- Hidden YouTube iframe (not shown) -->
+    <div style="display:none;">
+        <div id="yt-silent"></div>
+    </div>
+</body>
+</html>
