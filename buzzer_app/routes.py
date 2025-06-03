@@ -11,6 +11,16 @@ import base64
 def is_request_from_localhost():
     return request.remote_addr in ("127.0.0.1", "localhost", "::1")
 
+def find_image_pairs(folder):
+    files = os.listdir(folder)
+    bases = set()
+    for f in files:
+        if f.endswith("1.jpg"):
+            base = f[:-5]
+            if f"{base}2.jpg" in files:
+                bases.add(base)
+    return list(bases)
+
 def scramble_image(image_path, n):
     image = Image.open(image_path)
     width, height = image.size
@@ -134,3 +144,22 @@ def configure_routes(app):
                                segment_index=segment_index,
                                total_clips=len(clips),
                                total_segments=len(segments))
+    @app.route('/photopair', methods=['GET'])
+    def photopair():
+        m = int(request.args.get("m", 4))
+        n = int(request.args.get("n", 4))
+        delay = int(request.args.get("delay", 2000))
+        folder = "static/photopair"
+        pairs = find_image_pairs(folder)
+        needed = (m * n) // 2
+        if len(pairs) < needed:
+            images = []
+        else:
+            selected = random.sample(pairs, needed)
+            images = []
+            for base in selected:
+                images.append(f"{base}1.jpg")
+                images.append(f"{base}2.jpg")
+            random.shuffle(images)
+
+        return render_template("photopair.html", m=m, n=n, delay=delay, images=images)
