@@ -27,3 +27,9 @@ def configure_routes(app):
             return redirect('/report')
 
         return render_template("report.html", entries=buzzer_entries)
+    @app.route('/resetnames', methods=['POST'])
+    def reset_names():
+        # This only affects cookie-based IP-to-name locks
+        # You can't truly delete cookies on other users' browsers, but we'll reset the entries
+        buzzer_entries.clear()
+        return redirect('/report')
