@@ -14,15 +14,21 @@
         <h2>Buzzer</h2>
         <form method="post">
             <div class="mb-3">
-                <input type="text" name="name" class="form-control form-control-lg" style="font-size: 2rem;" placeholder="Your name" value="{{ name }}" required>
-
+                <input type="text" name="name" class="form-control form-control-lg"
+                style="font-size: 2rem;" placeholder="Your name" value="{{ name }}"
+                {% if name_locked %}readonly{% endif %} required>
+                
             </div>
+            <div class="mb-3">
+                <textarea name="note" class="form-control form-control-lg" style="font-size: 1.5rem;" placeholder="Note...">{{ note }}</textarea>
+            </div>
+            
             <button type="submit" class="btn btn-danger buzz-btn">Buzz!</button>
         </form>
         {% if message %}
         <div class="alert alert-success mt-3">{{ message }}</div>
         {% endif %}
-        <a href="/report" class="btn btn-link mt-3">See Report</a>
+       
     </div>
 </body>
 </html>

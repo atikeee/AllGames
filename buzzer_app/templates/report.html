@@ -14,7 +14,8 @@
         {% if entries %}
         <table class="table table-bordered table-striped">
             <thead>
-                <tr><th>Name</th><th>IP</th><th>Time</th></tr>
+                
+                <tr><th>Name</th><th>IP</th><th>Time</th><th>Note</th></tr>
             </thead>
             <tbody>
                 {% for entry in entries %}
@@ -22,6 +23,7 @@
                     <td>{{ entry.name }}</td>
                     <td>{{ entry.ip }}</td>
                     <td>{{ entry.time }}</td>
+                    <td>{{ entry.note }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

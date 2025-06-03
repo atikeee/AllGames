@@ -7,19 +7,33 @@ def configure_routes(app):
     def buzzer():
         message = ''
         name_value = request.cookies.get('name', '')
+        name_locked = False
 
         if request.method == 'POST':
             name = request.form.get('name')
             ip = request.remote_addr
             time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            buzzer_entries.append({'name': name, 'ip': ip, 'time': time})
-            message = f"Buzz from {name} recorded!"
-            resp = make_response(render_template("buzzer.html", message=message, name=name))
-            resp.set_cookie('name', name)
+
+            # Save name to cookie if not already stored
+            if not name_value:
+                name_value = name
+                name_locked = True
+            else:
+                name_locked = True  # name already exists in cookie
+
+            note = request.form.get('note', '')
+            buzzer_entries.append({'name': name_value, 'ip': ip, 'time': time, 'note': note})
+
+            message = f"Buzz from {name_value} recorded!"
+
+            resp = make_response(render_template("buzzer.html", message=message, name=name_value, name_locked=name_locked, note=note))
+            resp.set_cookie('name', name_value)
             return resp
 
-        return render_template("buzzer.html", message=message, name=name_value)
+        if name_value:
+            name_locked = True
 
+        return render_template("buzzer.html", message=message, name=name_value, name_locked=name_locked, note="")
     @app.route('/report', methods=['GET', 'POST'])
     def report():
         if request.method == 'POST':
@@ -32,4 +46,7 @@ def configure_routes(app):
         # This only affects cookie-based IP-to-name locks
         # You can't truly delete cookies on other users' browsers, but we'll reset the entries
         buzzer_entries.clear()
-        return redirect('/report')
+        resp = make_response(redirect('/report'))
+        resp.set_cookie('name', '', expires=0)
+        #return redirect('/report')
+        return resp
