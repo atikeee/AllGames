@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Misc Quiz</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    img { max-width: 80%; height: auto; margin-bottom: 20px; }
+    button { margin: 10px; padding: 10px 20px; font-size: 1.1em; }
+    .info { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h2>📷 Misc Image Quiz</h2>
+
+  {% if data.image %}
+  <img src="{{ url_for('misc_image', filename=data.image) }}" alt="Image"
+     style="max-width: 95vw; max-height: 70vh; object-fit: contain; border: 1px solid #ccc;" />
+
+  {% endif %}
+
+  <div class="info">
+    <p><strong>Question:</strong> {{ data.question }}</p>
+    <button onclick="document.getElementById('hint').style.display='block'">Show Hint</button>
+    <button onclick="document.getElementById('answer').style.display='block'">Show Answer</button>
+
+    <div id="hint" style="display:none;"><strong>Hint:</strong> {{ data.hint }}</div>
+    <div id="answer" style="display:none;"><strong>Answer:</strong> {{ data.answer }}</div>
+  </div>
+
+  <div style="margin-top:30px;">
+    {% if data.index > 0 %}
+      <a href="{{ url_for('misc', index=data.index - 1) }}"><button>⬅️ Previous</button></a>
+    {% endif %}
+    {% if data.index < data.total - 1 %}
+      <a href="{{ url_for('misc', index=data.index + 1) }}"><button>Next ➡️</button></a>
+    {% endif %}
+  </div>
+</body>
+</html>

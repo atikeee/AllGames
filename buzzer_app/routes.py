@@ -1,3 +1,4 @@
+import pandas as pd
 from flask import request, render_template, redirect, abort, send_from_directory
 from datetime import datetime
 from storage import buzzer_entries, name_locks
@@ -168,3 +169,19 @@ def configure_routes(app):
     @app.route('/photopair_images/<filename>')
     def photopair_image(filename):
         return send_from_directory("photopair", filename)
+    @app.route('/misc_image/<filename>')
+    def misc_image(filename):
+        return send_from_directory('misc', filename)
+    @app.route('/misc')
+    def misc():
+        index = int(request.args.get("index", 0))
+        csv_path = "misc_data.csv"
+        if not os.path.exists(csv_path):
+            return "CSV file not found."
+
+        df = pd.read_csv(csv_path).fillna("")
+        index = max(0, min(index, len(df) - 1))
+        data = df.iloc[index].to_dict()
+        data["index"] = index
+        data["total"] = len(df)
+        return render_template("misc.html", data=data)
