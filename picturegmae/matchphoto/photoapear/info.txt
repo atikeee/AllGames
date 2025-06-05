@@ -1,2 +1,0 @@
-Add Numbering on the form. 
-Create new app that will add pixel slowly. 

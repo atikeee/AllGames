@@ -1,3 +1,0 @@
-this will scramble picture. 
-Image resize is not incorporated. 
-keyboard shortcut is available. 
