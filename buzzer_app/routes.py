@@ -185,3 +185,30 @@ def configure_routes(app):
         data["index"] = index
         data["total"] = len(df)
         return render_template("misc.html", data=data)
+    @app.route('/riddle')
+    def riddle():
+        import glob
+
+        index = int(request.args.get("index", 0))
+        files = sorted(glob.glob("riddle/q*.txt"))
+
+        if not files:
+            return "No riddle files found."
+
+        index = max(0, min(index, len(files) - 1))
+
+        with open(files[index], 'r', encoding='utf-8') as f:
+            parts = f.read().split("###")
+            question = parts[0].strip() if len(parts) > 0 else ""
+            answer = parts[1].strip() if len(parts) > 1 else ""
+            hint = parts[2].strip() if len(parts) > 2 else ""
+
+        data = {
+            "question": question,
+            "answer": answer,
+            "hint": hint,
+            "index": index,
+            "total": len(files)
+        }
+
+        return render_template("riddle.html", data=data)
