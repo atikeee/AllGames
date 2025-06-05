@@ -56,10 +56,22 @@ def load_clips():
 def extract_video_id(url):
     match = re.search(r"v=([^&]+)", url)
     return match.group(1) if match else None
+def generate_letter_mapping():
+    import random, string
+    letters = list(string.ascii_uppercase)
+    while True:
+        shuffled = letters[:]
+        random.shuffle(shuffled)
+        if all(l != s for l, s in zip(letters, shuffled)):
+            return dict(zip(letters, shuffled))
 
 
 def configure_routes(app):
-    @app.route('/', methods=['GET', 'POST'])
+    @app.route("/")
+    def index():
+        return render_template("index.html")
+
+    @app.route('/buzzer', methods=['GET', 'POST'])
     def buzzer():
         message = ''
         ip = request.remote_addr
@@ -212,3 +224,21 @@ def configure_routes(app):
         }
 
         return render_template("riddle.html", data=data)
+    @app.route('/crack')
+    def crack():
+        riddle_dir = 'riddle'
+        files = sorted(f for f in os.listdir(riddle_dir) if f.startswith('s') and f.endswith('.txt'))
+
+        def encode(text, mapping):
+            return ''.join(mapping.get(ch.upper(), ch) for ch in text)
+
+        mapping = generate_letter_mapping()
+        data = []
+
+        for fname in files:
+            with open(os.path.join(riddle_dir, fname), encoding='utf-8') as f:
+                answer = f.read().strip().upper()
+                cipher = encode(answer, mapping)
+                data.append({'question': cipher, 'answer': answer})
+
+        return render_template('crack.html', data=data)
