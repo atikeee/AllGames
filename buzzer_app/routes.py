@@ -71,25 +71,37 @@ def configure_routes(app):
     def index():
         return render_template("index.html")
 
+   
     @app.route("/buzzer", methods=["GET", "POST"])
     def buzzer():
         message = ''
         name_value = request.cookies.get('name', '')
-        name_locked = False
-        if request.method == 'POST':
-            name = request.form.get('name')
-            ip = request.remote_addr
-            time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            message = f"Buzz from {name} recorded!"
-            note = request.form.get('note')
-            buzzer_entries.append({'name': name, 'ip': ip, 'note': note, 'time': time})
-            resp = make_response(render_template("buzzer.html", message=message, name=name,note=note))
-            resp.set_cookie('name', name)
-            return resp
-        if name_value:
-            name_locked = True
+        name_locked = request.cookies.get('name_locked')
+        #name_locked = name_locked_cookie == 'true'
 
-        return render_template("buzzer.html", message=message, name=name_value,name_locked=name_locked, note="")
+        if request.method == 'POST':
+            if not name_locked:
+                name = request.form.get('name')
+                ip = request.remote_addr
+                time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                note = request.form.get('note')
+                message = f"Buzz from {name} recorded!"
+                buzzer_entries.append({'name': name, 'ip': ip, 'note': note, 'time': time})
+                resp = make_response(render_template("buzzer.html", message=message, name=name, name_locked=True, note=""))
+                
+                resp.set_cookie('name', name)
+                resp.set_cookie('name_locked', 'true')
+                return resp
+            else:
+                name = name_value
+                note = request.form.get('note')
+                ip = request.remote_addr
+                time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                message = f"Buzz from {name} recorded!"
+                buzzer_entries.append({'name': name, 'ip': ip, 'note': note, 'time': time})
+                return render_template("buzzer.html", message=message, name=name, name_locked=True, note=note)
+
+        return render_template("buzzer.html", message=message, name=name_value, name_locked=name_locked, note="")
 
 
 
