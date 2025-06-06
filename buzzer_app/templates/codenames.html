@@ -13,17 +13,48 @@
     <form method="get" action="/start_codenames">
         <button type="submit" class="btn btn-primary">Start New Game</button>
     </form>
+    
     <div class="grid">
         {% for word in words %}
-        <div class="cell">{{ word }}</div>
+          <div class="cell" {% if hint_log %} onclick="handleCellClick(this)" {% endif %}>
+            {{ word }}
+          </div>
         {% endfor %}
-    </div>
+      </div>
+      
     <div class="log">
         <h3>Hint Log</h3>
         {% for entry in hint_log %}
             <div>{{ entry }}</div>
         {% endfor %}
     </div>
-    
+    <script>
+        const colors_ = {{ colors|default([])|tojson }};
+        const lastTeam = "{{ last_team|default('Red') }}";
+        const revealed = Array(25).fill(false); // if needed
+        
+        function handleCellClick(cell) {
+            
+            const index = Array.from(document.querySelectorAll(".cell")).indexOf(cell);
+            
+          if (revealed[index]) return;
+      
+          const color = colors_[index];
+          console.log(lastTeam);
+          console.log(color);
+          const isWrong = (lastTeam === "red" && color === "blue") ||
+                          (lastTeam === "blue" && color === "red") || color=="black";
+          console.log(isWrong);
+      
+          if (isWrong) {
+            // disable further clicking
+            document.querySelectorAll(".cell").forEach(c => c.onclick = null);
+          }
+      
+          cell.style.backgroundColor = color;
+          revealed[index] = true;
+        }
+      </script>
+      
 </body>
 </html>

@@ -26,17 +26,19 @@
         {% endfor %}
     </div>
 
-      
-      
-    <form method="POST" style="text-align:center; margin-top:20px;">
-        <input type="text" name="hint" placeholder="Hint word" required />
-        <select name="count">
-            {% for i in range(1, 10) %}
+    <form method="post">
+        <label>Team: <strong>{{ current_team }}</strong></label><br>
+        Hint: <input type="text" name="hint" required>
+        Count: <select name="count">
+          {% for i in range(1, 10) %}
             <option value="{{ i }}">{{ i }}</option>
-            {% endfor %}
+          {% endfor %}
         </select>
         <button type="submit">Submit Hint</button>
-    </form>
+      </form>
+      
+      
+
     <div class="log">
         <h3>Hint Log</h3>
         {% for entry in hint_log %}

@@ -7,6 +7,7 @@ import random
 from PIL import Image
 from io import BytesIO
 import base64
+current_team = "red"
 
 
 def is_request_from_localhost():
@@ -257,31 +258,39 @@ def configure_routes(app):
         return render_template('crack.html', data=data)
     @app.route("/codenames")
     def codenames():
+        last_team = hint_log[-1][0] if hint_log else "Red"
+
         if not current_game['words']:  # Only if game not started
             return redirect(url_for('start_codenames'))
 
         return render_template(
             "codenames.html",
             words=current_game['words'],
+            colors=current_game['colors'],
+            last_team=last_team,
             hint_log=hint_log
         )
 
     @app.route("/codenames_spy", methods=["GET", "POST"])
     def codenames_spy():
+        global hint_log, current_team
+        
+
         if not current_game['words']:  # fallback safety
             return redirect(url_for('start_codenames'))
 
         if request.method == "POST":
             hint = request.form.get("hint")
             count = request.form.get("count")
-            if hint and count:
-                hint_log.append(f"Hint: {hint} ({count})")
+            hint_log.append([current_team, hint, count])  # updated structure
+            current_team = "blue" if current_team == "red" else "red"
 
         return render_template(
             "codenames_spy.html",
             words=current_game['words'],
             colors=current_game['colors'],
             hint_log=hint_log,
+            current_team=current_team,
             zip=zip
         )
 
