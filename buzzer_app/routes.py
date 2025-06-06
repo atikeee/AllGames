@@ -1,7 +1,7 @@
 import pandas as pd
-from flask import request, render_template, redirect, abort, send_from_directory, make_response
+from flask import request, render_template, redirect, abort, send_from_directory, make_response,url_for
 from datetime import datetime
-from storage import buzzer_entries, name_locks
+from storage import buzzer_entries, name_locks,codenames_words,codenames_colors,hint_log,current_game
 import csv, os, re
 import random
 from PIL import Image
@@ -255,3 +255,49 @@ def configure_routes(app):
                 data.append({'question': cipher, 'answer': answer})
 
         return render_template('crack.html', data=data)
+    @app.route("/codenames")
+    def codenames():
+        if not current_game['words']:  # Only if game not started
+            return redirect(url_for('start_codenames'))
+
+        return render_template(
+            "codenames.html",
+            words=current_game['words'],
+            hint_log=hint_log
+        )
+
+    @app.route("/codenames_spy", methods=["GET", "POST"])
+    def codenames_spy():
+        if not current_game['words']:  # fallback safety
+            return redirect(url_for('start_codenames'))
+
+        if request.method == "POST":
+            hint = request.form.get("hint")
+            count = request.form.get("count")
+            if hint and count:
+                hint_log.append(f"Hint: {hint} ({count})")
+
+        return render_template(
+            "codenames_spy.html",
+            words=current_game['words'],
+            colors=current_game['colors'],
+            hint_log=hint_log,
+            zip=zip
+        )
+
+    @app.route("/start_codenames")
+    def start_codenames():
+        word_file = 'words.txt'
+        with open(word_file) as f:
+            all_words = [line.strip() for line in f if line.strip()]
+        selected_words = random.sample(all_words, 25)
+
+        color_list = ['red'] * 9 + ['blue'] * 8 + ['black'] + ['gray'] * 7
+        random.shuffle(color_list)
+
+        current_game['words'] = selected_words
+        current_game['colors'] = color_list
+        hint_log.clear()
+
+        return redirect(url_for('codenames'))
+    

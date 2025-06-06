@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Codenames</title>
+    <style>
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 600px; margin: auto; }
+        .cell { padding: 20px; border: 1px solid #ccc; font-size: 1.2rem; text-align: center; background-color: #f2f2f2; }
+        .log { margin-top: 20px; max-width: 600px; margin: auto; font-size: 0.9rem; background: #eef; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center">Codenames</h2>
+    <form method="get" action="/start_codenames">
+        <button type="submit" class="btn btn-primary">Start New Game</button>
+    </form>
+    <div class="grid">
+        {% for word in words %}
+        <div class="cell">{{ word }}</div>
+        {% endfor %}
+    </div>
+    <div class="log">
+        <h3>Hint Log</h3>
+        {% for entry in hint_log %}
+            <div>{{ entry }}</div>
+        {% endfor %}
+    </div>
+    
+</body>
+</html>
