@@ -1,5 +1,5 @@
 import pandas as pd
-from flask import request, render_template, redirect, abort, send_from_directory
+from flask import request, render_template, redirect, abort, send_from_directory, make_response
 from datetime import datetime
 from storage import buzzer_entries, name_locks
 import csv, os, re
@@ -71,27 +71,28 @@ def configure_routes(app):
     def index():
         return render_template("index.html")
 
-    @app.route('/buzzer', methods=['GET', 'POST'])
+    @app.route("/buzzer", methods=["GET", "POST"])
     def buzzer():
         message = ''
-        ip = request.remote_addr
-        name_value = name_locks.get(ip, '')
-        name_locked = bool(name_value)
-
+        name_value = request.cookies.get('name', '')
+        name_locked = False
         if request.method == 'POST':
             name = request.form.get('name')
-            note = request.form.get('note', '')
+            ip = request.remote_addr
             time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            message = f"Buzz from {name} recorded!"
+            note = request.form.get('note')
+            buzzer_entries.append({'name': name, 'ip': ip, 'note': note, 'time': time})
+            resp = make_response(render_template("buzzer.html", message=message, name=name,note=note))
+            resp.set_cookie('name', name)
+            return resp
+        if name_value:
+            name_locked = True
 
-            if not name_locked:
-                name_locks[ip] = name
-                name_value = name
-                name_locked = True
+        return render_template("buzzer.html", message=message, name=name_value,name_locked=name_locked, note="")
 
-            buzzer_entries.append({'name': name_value, 'ip': ip, 'time': time, 'note': note})
-            message = f"Buzz from {name_value} recorded!"
 
-        return render_template("buzzer.html", message=message, name=name_value, name_locked=name_locked, note='')
+
 
     @app.route('/report', methods=['GET', 'POST'])
     def report():
