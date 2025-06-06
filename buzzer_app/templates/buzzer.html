@@ -98,8 +98,11 @@
     </style>
 </head>
 <body>
-
+    {% if message %}
     <div id="floatingMessage" class="floating-message">{{ message }}</div>
+    {% endif %}
+
+
 
     <div class="container">
         <div class="buzzer-box">
@@ -130,7 +133,7 @@
     if (msgEl && msgEl.textContent.trim() !== '') {
         setTimeout(() => {
             msgEl.classList.add('hide');
-        }, 3000); // 3 seconds
+        }, 2000); // 3 seconds
     }
 };
 </script>

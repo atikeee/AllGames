@@ -10,7 +10,8 @@
 </head>
 <body>
     <div class="container">
-        <h2 class="mb-4">Buzz Report</h2>
+        <h2 class="mb-4">Buzz Report       <span class="refresh-icon" onclick="clearNameLock()" title="Reset Name">🔄</span>
+        </h2>
         {% if entries %}
         <table class="table table-bordered table-striped">
             <thead>
@@ -51,5 +52,14 @@
 
         <a href="/" class="btn btn-link mt-3">Home</a>
     </div>
+    <script>
+        function clearNameLock() {
+        
+        document.cookie = "name=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "name_locked=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.href = window.location.pathname;
+
+    }
+    </script>
 </body>
 </html>

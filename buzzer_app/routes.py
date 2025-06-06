@@ -172,8 +172,8 @@ def configure_routes(app):
                                total_segments=len(segments))
     @app.route('/photopair', methods=['GET'])
     def photopair():
-        m = int(request.args.get("m", 4))
-        n = int(request.args.get("n", 4))
+        m = int(request.args.get("m", 3))
+        n = int(request.args.get("n", 8))
         delay = int(request.args.get("delay", 2000))
         folder = "photopair"
         pairs = find_image_pairs(folder)
