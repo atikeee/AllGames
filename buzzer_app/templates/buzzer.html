@@ -7,27 +7,69 @@
         body { display: flex; align-items: center; justify-content: center; height: 100vh; background-color: #f8f9fa; }
         .buzzer-box { text-align: center; background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
         .buzz-btn { font-size: 4rem; padding: 1rem 3rem; margin-top: 1rem; }
+        .floating-message {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #4CAF50;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+        font-size: 1.2rem;
+        z-index: 9999;
+        animation: fadeout 4s forwards;
+    }
+
+    @keyframes fadeout {
+        0%   { opacity: 1; }
+        80%  { opacity: 1; }
+        100% { opacity: 0; display: none; }
+    }
     </style>
 </head>
 <body>
     <div class="buzzer-box">
         <h2>Buzzer</h2>
+        {% if message %}
+        <div id="floating-message" class="floating-message">
+            {{ message }}
+        </div>
+        {% endif %}
+
         <form method="post">
-            <div class="mb-3">
+            <div class="mb-3" style="display: flex; align-items: center;">
                 <input type="text" name="name" class="form-control form-control-lg"
-                style="font-size: 2rem;" placeholder="Your name" value="{{ name }}"
-                {% if name_locked %}readonly{% endif %} required>
+                    style="font-size: 2rem; flex: 1;" placeholder="Your name" value="{{ name }}"
+                    {% if name_locked %}readonly{% endif %} required>
                 
+                <span class="refresh-icon"
+                    onclick="clearNameLock()"
+                    title="Reset Name"
+                    style="font-size: 4rem; margin-left: 10px; cursor: pointer;">
+                    🔄
+                </span>
             </div>
+            
             <div class="mb-3">
                 <textarea name="note" class="form-control form-control-lg" style="font-size: 1.5rem;" placeholder="Note...">{{ note }}</textarea>
             </div>
             <button type="submit" class="btn btn-danger buzz-btn">Buzz!</button>
         </form>
-        {% if message %}
-        <div class="alert alert-success mt-3">{{ message }}</div>
-        {% endif %}
+        
         
     </div>
+    
+
+<script>
+    function clearNameLock() {
+        
+        document.cookie = "name=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "name_locked=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.href = window.location.pathname;
+
+    }
+</script>
+
 </body>
 </html>
