@@ -87,14 +87,7 @@
     </div>
 
 
-    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
-    <script>
-        const socket = io();
 
-        socket.on('new_hint', (data) => {
-            location.reload();  // reloads when a new hint is received
-        });
-    </script>
     <script>
         const colors_ = {{ colors|default([])|tojson }};
         const lastTeam = "{{ last_team|default('Red') }}".toLowerCase();

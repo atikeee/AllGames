@@ -68,7 +68,7 @@ def generate_letter_mapping():
             return dict(zip(letters, shuffled))
 
 
-def configure_routes(app,socketio):
+def configure_routes(app):
     @app.route("/")
     def index():
         return render_template("index.html")
@@ -285,8 +285,8 @@ def configure_routes(app,socketio):
             count = request.form.get("count")
             hint_log.append([current_game['team'], hint, count])  # updated structure
             current_game['team'] = "blue" if current_game['team'] == "red" else "red"
-            if hint:
-                socketio.emit('new_hint',{'hint':hint, 'count':count})
+            #if hint:
+            #    socketio.emit('new_hint',{'hint':hint, 'count':count})
         return render_template(
             "codenames_spy.html",
             words=current_game['words'],
@@ -313,7 +313,7 @@ def configure_routes(app,socketio):
         current_game['team'] = 'red'
         current_game['winner'] = None
         hint_log.clear()
-        socketio.emit("new_game")
+        #socketio.emit("new_game")
         return redirect(url_for('codenames'))
     
     @app.route("/reveal/<int:index>", methods=["POST"])
