@@ -90,6 +90,14 @@
             </div>
         {% endfor %}
     </div>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+    const socket = io();
+
+    socket.on("new_game", () => {
+        location.reload();
+    });
+    </script>
 
     <script>
         function validateForm() {

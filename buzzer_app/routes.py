@@ -10,6 +10,7 @@ import base64
 
 
 
+
 def is_request_from_localhost():
     return request.remote_addr in ("127.0.0.1", "localhost", "::1")
 
@@ -67,7 +68,7 @@ def generate_letter_mapping():
             return dict(zip(letters, shuffled))
 
 
-def configure_routes(app):
+def configure_routes(app,socketio):
     @app.route("/")
     def index():
         return render_template("index.html")
@@ -283,7 +284,8 @@ def configure_routes(app):
             count = request.form.get("count")
             hint_log.append([current_game['team'], hint, count])  # updated structure
             current_game['team'] = "blue" if current_game['team'] == "red" else "red"
-
+            if hint:
+                socketio.emit('new_hint',{'hint':hint, 'count':count})
         return render_template(
             "codenames_spy.html",
             words=current_game['words'],
@@ -309,6 +311,7 @@ def configure_routes(app):
         current_game['revealed'] = set()
         current_game['team'] = 'red'
         hint_log.clear()
+        socketio.emit("new_game")
         return redirect(url_for('codenames'))
     
     @app.route("/reveal/<int:index>", methods=["POST"])
