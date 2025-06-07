@@ -1,5 +1,5 @@
 import pandas as pd
-from flask import request, render_template, redirect, abort, send_from_directory, make_response,url_for
+from flask import request, render_template, redirect, abort, send_from_directory, make_response,url_for,jsonify
 from datetime import datetime
 from storage import buzzer_entries, name_locks,codenames_words,codenames_colors,hint_log,current_game
 import csv, os, re
@@ -312,10 +312,7 @@ def configure_routes(app,socketio):
         current_game['revealed'] = set()
         current_game['team'] = 'red'
         current_game['winner'] = None
-        print('--------------------------------------')
-        print(hint_log)
         hint_log.clear()
-        print(hint_log)
         socketio.emit("new_game")
         return redirect(url_for('codenames'))
     
@@ -327,12 +324,13 @@ def configure_routes(app,socketio):
         black_revealed = any(current_game['colors'][i] == 'black' for i in current_game['revealed'])
         winner = None
         if black_revealed:
-            winner = "Red" if hint_log and hint_log[-1][0] == "Red" else "Blue"
+            winner = "Blue" if hint_log and hint_log[-1][0] == "red" else "Red"
         elif red_revealed == 9:
             winner = "Red"
         elif blue_revealed == 8:
             winner = "Blue"
 
         current_game['winner'] = winner  # ✅ Save winner
-        return redirect(url_for('codenames'))
+        return jsonify({"winner": winner})
+        #return redirect(url_for('codenames'))
         #return '', 204  # no content
