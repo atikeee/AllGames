@@ -3,71 +3,110 @@
 <head>
     <title>Codenames</title>
     <style>
-        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 600px; margin: auto; }
-        .cell { padding: 20px; border: 1px solid #ccc; font-size: 1.2rem; text-align: center; background-color: #f2f2f2; }
-        .log { margin-top: 20px; max-width: 600px; margin: auto; font-size: 0.9rem; background: #eef; padding: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .start-btn {
+            display: block;
+            margin: 0 auto 30px auto;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            max-width: 700px;
+            margin: auto;
+        }
+        .cell {
+            padding: 25px;
+            font-size: 1.2rem;
+            border: 2px solid #ccc;
+            text-align: center;
+            border-radius: 6px;
+            background-color: #ccc;
+            cursor: pointer;
+        }
+        .log {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #eef;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .log h3 {
+            margin-top: 0;
+        }
+        .hint-entry {
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+        }
     </style>
 </head>
 <body>
     <h2 style="text-align:center">Codenames</h2>
     <form method="get" action="/start_codenames">
-        <button type="submit" class="btn btn-primary">Start New Game</button>
+        <button type="submit" class="start-btn">Start New Game</button>
     </form>
-    
+
     <div class="grid">
         {% for idx in range(25) %}
-          <div class="cell"
-               style="background-color: {% if idx in revealed %}{{ colors[idx] }}{% else %}#ccc{% endif %};"
-               data-idx="{{ idx }}"
-               {% if hint_log %}onclick="reveal({{ idx }})"{% endif %}>
-            {{ words[idx] }}
-          </div>
+        <div class="cell"
+        style="background-color: {% if idx in revealed %}{{ colors[idx] }}{% else %}#ccc{% endif %};"
+        {% if hint_log %}onclick="reveal({{ idx }})"{% endif %}>
+     {{ words[idx] }}
+   </div>
+   
         {% endfor %}
-      </div>
-            
-      
-      <div class="log">
-        <h3>Hint</h3>
+    </div>
+
+    <div class="log">
+        <h3>Hint Log</h3>
         {% for entry in hint_log %}
-            <div style="color: {{ 'red' if entry[0].lower() == 'red' else 'blue' }};font-size: 1.4rem;">
-                <strong>{{ entry[1]|capitalize }}</strong> 
-                 ({{ entry[2] }})
+            <div class="hint-entry" style="color: {{ 'red' if entry[0].lower() == 'red' else 'blue' }};">
+                <strong>{{ entry[1]|capitalize }}</strong> ({{ entry[2] }})
             </div>
         {% endfor %}
     </div>
     <script>
-       const colors_ = {{ colors|default([])|tojson }};
-  const lastTeam = "{{ last_team|default('Red') }}";
-  const revealed = new Set({{ revealed|list|tojson }});
-
-  function reveal(index) {
-    if (revealed.has(index)) return;
-
-    const cell = document.querySelectorAll(".cell")[index];
-    const color = colors_[index];
-
-    const isWrong = (lastTeam.toLowerCase() === "red" && color === "blue") ||
-                    (lastTeam.toLowerCase() === "blue" && color === "red") ||
-                    color === "black";
-
-    // Apply color }
-    if(color=='red')
-        cell.style.backgroundColor = "#e74c3c";
-    else if(color=='blue')
-        cell.style.backgroundColor = "#3498db";
-    else
-        cell.style.backgroundColor = color;
-    revealed.add(index);
-
-    if (isWrong) {
-      // Disable all cells
-      document.querySelectorAll(".cell").forEach(c => c.removeAttribute("onclick"));
-    }
-
-    // Notify server
-    fetch('/reveal/' + index, { method: 'POST' });
-  }
-      </script>
-      
+        const colors_ = {{ colors|default([])|tojson }};
+        const lastTeam = "{{ last_team|default('Red') }}".toLowerCase();
+        const revealed = new Set([{% for idx in revealed %}{{ idx }}, {% endfor %}]);
+    
+        function reveal(index) {
+            if (revealed.has(index)) return;
+    
+            const cell = document.querySelectorAll(".cell")[index];
+            const color = colors_[index];
+            const colorLower = color.toLowerCase();
+    
+            // Check if the current click is invalid (wrong color)
+            const isWrong = (lastTeam === "red" && colorLower === "blue") ||
+                            (lastTeam === "blue" && colorLower === "red") ||
+                            colorLower === "black";
+    
+            // Reveal color visually
+            cell.style.backgroundColor = color;
+            revealed.add(index);
+    
+            // Notify server
+            fetch('/reveal/' + index, { method: 'POST' });
+    
+            // If clicked wrong color, disable all further cell clicks
+            if (isWrong) {
+                document.querySelectorAll(".cell").forEach(c => c.onclick = null);
+            }
+        }
+    </script>
+    
+    
 </body>
 </html>

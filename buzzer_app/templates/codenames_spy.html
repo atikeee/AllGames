@@ -1,51 +1,105 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Codenames Spy View</title>
+    <title>Codenames Spy</title>
     <style>
-        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 600px; margin: auto; }
-        .cell {
+        body {
+            font-family: Arial, sans-serif;
             padding: 20px;
-            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            max-width: 700px;
+            margin: auto;
+            margin-bottom: 30px;
+        }
+        .cell {
+            padding: 25px;
             font-size: 1.2rem;
+            border: 2px solid #ccc;
             text-align: center;
+            border-radius: 6px;
             color: white;
         }
-        .red { background-color: #e74c3c; }
-        .blue { background-color: #3498db; }
-        .black { background-color: black; }
-        .gray { background-color: #929292; }
-        .log { margin-top: 20px; max-width: 600px; margin: auto; font-size: 0.9rem; background: #eef; padding: 10px; }
+        .form-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="text"], select {
+            padding: 10px;
+            font-size: 1.2rem;
+        }
+        .submit-btn {
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .log {
+            max-width: 700px;
+            margin: 30px auto;
+            background: #eef;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .hint-entry {
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+        }
     </style>
 </head>
 <body>
-    <h2 style="text-align:center">Spy View</h2>
+    <h2 style="text-align:center">Codenames Spy</h2>
+
+    <form method="post" onsubmit="return validateForm()">
+        <div class="form-section">
+            <strong style="font-size:1.2rem;">Team:</strong>
+            <span style="font-size:1.3rem; color: {{ 'red' if current_team == 'red' else 'blue' }};">
+                {{ current_team|capitalize }}
+            </span>
+            <input type="text" name="hint" id="hint" placeholder="Hint Word">
+            <select name="count">
+                {% for i in range(1, 10) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="submit-btn">Submit Hint</button>
+        </div>
+    </form>
+
     <div class="grid">
         {% for word, color in zip(words, colors) %}
-        <div class="cell {{ color }}">{{ word }}</div>
+            <div class="cell" style="background-color: {{ color }}">{{ word }}</div>
         {% endfor %}
     </div>
 
-    <form method="post">
-        <label>Team: <strong>{{ current_team }}</strong></label><br>
-        Hint: <input type="text" name="hint" required>
-        Count: <select name="count">
-          {% for i in range(1, 10) %}
-            <option value="{{ i }}">{{ i }}</option>
-          {% endfor %}
-        </select>
-        <button type="submit">Submit Hint</button>
-      </form>
-      
-      
-<div class="log">
-    <h3>Hint</h3>
-    {% for entry in hint_log %}
-        <div style="color: {{ 'red' if entry[0].lower() == 'red' else 'blue' }};">
-            <strong>{{ entry[1]|capitalize }} Team:</strong> 
-             ({{ entry[2] }})
-        </div>
-    {% endfor %}
-</div>
+    <div class="log">
+        <h3>Hint Log</h3>
+        {% for entry in hint_log %}
+            <div class="hint-entry" style="color: {{ 'red' if entry[0].lower() == 'red' else 'blue' }};">
+                <strong>{{ entry[1]|capitalize }}</strong> ({{ entry[2] }})
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function validateForm() {
+            const hint = document.getElementById("hint").value.trim();
+            if (!hint) {
+                alert("Hint cannot be empty.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </body>
 </html>
