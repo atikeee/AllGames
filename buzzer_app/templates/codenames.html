@@ -76,6 +76,18 @@
             </div>
         {% endfor %}
     </div>
+
+    {% if winner %}
+    <div id="gameOverModal" style="position:fixed; top:0; left:0; width:100%; height:100%;
+        background-color: rgba(0, 0, 0, 0.7); z-index:1000; display:flex; justify-content:center; align-items:center;">
+    <div style="background:white; padding:30px; border-radius:10px; font-size:2rem; text-align:center;">
+        {{ winner }} Team Wins!
+        <br><br>
+        <button onclick="document.getElementById('gameOverModal').style.display='none';" style="font-size:1.2rem;">Close</button>
+    </div>
+    </div>
+    {% endif %}
+
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <script>
         const socket = io();

@@ -270,7 +270,8 @@ def configure_routes(app,socketio):
             colors=current_game['colors'],
             last_team=last_team,
             hint_log=hint_log,
-            revealed=current_game.get('revealed', set())  # ✅ Add this line
+            revealed=current_game.get('revealed', set()),  # ✅ Add this line
+            winner=current_game.get('winner')
         )
     @app.route("/codenames_spy", methods=["GET", "POST"])
     def codenames_spy():
@@ -297,6 +298,7 @@ def configure_routes(app,socketio):
 
     @app.route("/start_codenames")
     def start_codenames():
+        global hint_log
         word_file = 'words.txt'
         with open(word_file) as f:
             all_words = [line.strip() for line in f if line.strip()]
@@ -307,14 +309,30 @@ def configure_routes(app,socketio):
 
         current_game['words'] = selected_words
         current_game['colors'] = color_list
-        hint_log.clear()
         current_game['revealed'] = set()
         current_game['team'] = 'red'
+        current_game['winner'] = None
+        print('--------------------------------------')
+        print(hint_log)
         hint_log.clear()
+        print(hint_log)
         socketio.emit("new_game")
         return redirect(url_for('codenames'))
     
     @app.route("/reveal/<int:index>", methods=["POST"])
     def reveal_word(index):
         current_game['revealed'].add(index)
-        return '', 204  # no content
+        red_revealed = sum(1 for i in current_game['revealed'] if current_game['colors'][i] == 'red')
+        blue_revealed = sum(1 for i in current_game['revealed'] if current_game['colors'][i] == 'blue')
+        black_revealed = any(current_game['colors'][i] == 'black' for i in current_game['revealed'])
+        winner = None
+        if black_revealed:
+            winner = "Red" if hint_log and hint_log[-1][0] == "Red" else "Blue"
+        elif red_revealed == 9:
+            winner = "Red"
+        elif blue_revealed == 8:
+            winner = "Blue"
+
+        current_game['winner'] = winner  # ✅ Save winner
+        return redirect(url_for('codenames'))
+        #return '', 204  # no content

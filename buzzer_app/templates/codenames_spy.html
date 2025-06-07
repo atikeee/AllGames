@@ -95,7 +95,7 @@
     const socket = io();
 
     socket.on("new_game", () => {
-        location.reload();
+        window.location.href = window.location.href;
     });
     </script>
 
