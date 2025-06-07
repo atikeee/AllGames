@@ -78,7 +78,7 @@
 
     <div class="grid">
         {% for word, color in zip(words, colors) %}
-            <div class="cell" style="background-color: {{ color }}">{{ word }}</div>
+            <div class="cell" style="background-color: {{ color }}">{{ word|upper }}</div>
         {% endfor %}
     </div>
 
@@ -86,7 +86,7 @@
         <h3>Hint Log</h3>
         {% for entry in hint_log %}
             <div class="hint-entry" style="color: {{ 'red' if entry[0].lower() == 'red' else 'blue' }};">
-                <strong>{{ entry[1]|capitalize }}</strong> ({{ entry[2] }})
+                <strong>{{ entry[1]|upper }}</strong> ({{ entry[2] }})
             </div>
         {% endfor %}
     </div>
