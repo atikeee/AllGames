@@ -38,12 +38,14 @@
       </form>
       
       
-
-    <div class="log">
-        <h3>Hint Log</h3>
-        {% for entry in hint_log %}
-            <div>{{ entry }}</div>
-        {% endfor %}
-    </div>
+<div class="log">
+    <h3>Hint</h3>
+    {% for entry in hint_log %}
+        <div style="color: {{ 'red' if entry[0].lower() == 'red' else 'blue' }};">
+            <strong>{{ entry[1]|capitalize }} Team:</strong> 
+             ({{ entry[2] }})
+        </div>
+    {% endfor %}
+</div>
 </body>
 </html>

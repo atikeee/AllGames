@@ -15,45 +15,58 @@
     </form>
     
     <div class="grid">
-        {% for word in words %}
-          <div class="cell" {% if hint_log %} onclick="handleCellClick(this)" {% endif %}>
-            {{ word }}
+        {% for idx in range(25) %}
+          <div class="cell"
+               style="background-color: {% if idx in revealed %}{{ colors[idx] }}{% else %}#ccc{% endif %};"
+               data-idx="{{ idx }}"
+               {% if hint_log %}onclick="reveal({{ idx }})"{% endif %}>
+            {{ words[idx] }}
           </div>
         {% endfor %}
       </div>
+            
       
-    <div class="log">
-        <h3>Hint Log</h3>
+      <div class="log">
+        <h3>Hint</h3>
         {% for entry in hint_log %}
-            <div>{{ entry }}</div>
+            <div style="color: {{ 'red' if entry[0].lower() == 'red' else 'blue' }};font-size: 1.4rem;">
+                <strong>{{ entry[1]|capitalize }}</strong> 
+                 ({{ entry[2] }})
+            </div>
         {% endfor %}
     </div>
     <script>
-        const colors_ = {{ colors|default([])|tojson }};
-        const lastTeam = "{{ last_team|default('Red') }}";
-        const revealed = Array(25).fill(false); // if needed
-        
-        function handleCellClick(cell) {
-            
-            const index = Array.from(document.querySelectorAll(".cell")).indexOf(cell);
-            
-          if (revealed[index]) return;
-      
-          const color = colors_[index];
-          console.log(lastTeam);
-          console.log(color);
-          const isWrong = (lastTeam === "red" && color === "blue") ||
-                          (lastTeam === "blue" && color === "red") || color=="black";
-          console.log(isWrong);
-      
-          if (isWrong) {
-            // disable further clicking
-            document.querySelectorAll(".cell").forEach(c => c.onclick = null);
-          }
-      
-          cell.style.backgroundColor = color;
-          revealed[index] = true;
-        }
+       const colors_ = {{ colors|default([])|tojson }};
+  const lastTeam = "{{ last_team|default('Red') }}";
+  const revealed = new Set({{ revealed|list|tojson }});
+
+  function reveal(index) {
+    if (revealed.has(index)) return;
+
+    const cell = document.querySelectorAll(".cell")[index];
+    const color = colors_[index];
+
+    const isWrong = (lastTeam.toLowerCase() === "red" && color === "blue") ||
+                    (lastTeam.toLowerCase() === "blue" && color === "red") ||
+                    color === "black";
+
+    // Apply color }
+    if(color=='red')
+        cell.style.backgroundColor = "#e74c3c";
+    else if(color=='blue')
+        cell.style.backgroundColor = "#3498db";
+    else
+        cell.style.backgroundColor = color;
+    revealed.add(index);
+
+    if (isWrong) {
+      // Disable all cells
+      document.querySelectorAll(".cell").forEach(c => c.removeAttribute("onclick"));
+    }
+
+    // Notify server
+    fetch('/reveal/' + index, { method: 'POST' });
+  }
       </script>
       
 </body>

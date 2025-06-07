@@ -5,5 +5,7 @@ codenames_colors = []
 hint_log = []
 current_game = {
     'words': [],
-    'colors': []
+    'colors': [],
+    'revealed': set(),  # store indices of revealed words
+    'team': 'red',
 }

@@ -7,7 +7,7 @@ import random
 from PIL import Image
 from io import BytesIO
 import base64
-current_team = "red"
+
 
 
 def is_request_from_localhost():
@@ -268,13 +268,12 @@ def configure_routes(app):
             words=current_game['words'],
             colors=current_game['colors'],
             last_team=last_team,
-            hint_log=hint_log
+            hint_log=hint_log,
+            revealed=current_game.get('revealed', set())  # ✅ Add this line
         )
-
     @app.route("/codenames_spy", methods=["GET", "POST"])
     def codenames_spy():
-        global hint_log, current_team
-        
+        global hint_log
 
         if not current_game['words']:  # fallback safety
             return redirect(url_for('start_codenames'))
@@ -282,15 +281,15 @@ def configure_routes(app):
         if request.method == "POST":
             hint = request.form.get("hint")
             count = request.form.get("count")
-            hint_log.append([current_team, hint, count])  # updated structure
-            current_team = "blue" if current_team == "red" else "red"
+            hint_log.append([current_game['team'], hint, count])  # updated structure
+            current_game['team'] = "blue" if current_game['team'] == "red" else "red"
 
         return render_template(
             "codenames_spy.html",
             words=current_game['words'],
             colors=current_game['colors'],
             hint_log=hint_log,
-            current_team=current_team,
+            current_team=current_game['team'],
             zip=zip
         )
 
@@ -307,6 +306,12 @@ def configure_routes(app):
         current_game['words'] = selected_words
         current_game['colors'] = color_list
         hint_log.clear()
-
+        current_game['revealed'] = set()
+        current_game['team'] = 'red'
+        hint_log.clear()
         return redirect(url_for('codenames'))
     
+    @app.route("/reveal/<int:index>", methods=["POST"])
+    def reveal_word(index):
+        current_game['revealed'].add(index)
+        return '', 204  # no content
