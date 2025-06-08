@@ -1,7 +1,7 @@
 import pandas as pd
 from flask import request, render_template, redirect, abort, send_from_directory, make_response,url_for,jsonify
 from datetime import datetime
-from storage import buzzer_entries, name_locks,codenames_words,codenames_colors,hint_log,current_game
+from storage import *
 import csv, os, re
 import random
 from PIL import Image
@@ -66,7 +66,6 @@ def generate_letter_mapping():
         random.shuffle(shuffled)
         if all(l != s for l, s in zip(letters, shuffled)):
             return dict(zip(letters, shuffled))
-
 
 def configure_routes(app,socketio):
     @app.route("/")
@@ -334,3 +333,70 @@ def configure_routes(app,socketio):
         return jsonify({"winner": winner})
         #return redirect(url_for('codenames'))
         #return '', 204  # no content
+    @app.route("/panchforon/namelist", methods=["GET", "POST"])
+    def panchforon_namelist():
+        global pf_players, pf_deck
+        pf_words_file = 'pf_words.txt'
+
+        message = ""
+
+        if request.method == "POST":
+            action = request.form.get("action")
+            if action == "add":
+                name = request.form.get("player")
+                if name and name not in pf_players:
+                    pf_players.append(name)
+                else:
+                    message = "Name already exists or is empty."
+             
+
+            elif action == "clear":
+                pf_players.clear()
+            elif action == "delete":
+                name = request.form.get("name_to_del")
+                if name in pf_players:
+                    pf_players.remove(name)
+            elif action == "randomize":
+                random.shuffle(pf_players)
+            elif action == "start":
+                try:
+                    with open(pf_words_file) as f:
+                        words = [line.strip() for line in f if line.strip()]
+                    pf_deck = random.sample(words, len(pf_players) * 3)  # example multiplier
+                    
+                    return redirect(url_for("panchforon_play"))
+                except FileNotFoundError:
+                    message = "Word file not found."
+        return render_template("panchforon_namelist.html", pf_players=pf_players)
+
+    @app.route("/panchforon/play")
+    def panchforon_play():
+        if not pf_players:
+            return redirect(url_for('panchforon_namelist'))  # fallback if no players or deck
+
+        
+        timer_value = pf_timer[pf_level-1]
+        return render_template("play.html",
+                           level=pf_level,
+                           pf_players=pf_players,
+                           pf_player_idx=pf_player_idx,
+                           timer=timer_value,
+                           pf_deck=pf_deck,
+                           pf_word_idx = pf_word_idx,
+                           pf_cards=pf_cards)
+
+    @app.route("/panchforon/next_player", methods=["POST"])
+    def next_player():
+        global pf_player_idx, pf_cards, pf_deck
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data received"}), 400
+
+        pf_cards = data.get("pf_cards", {})
+        pf_deck = data.get("pf_deck", [])
+
+        pf_player_idx = (pf_player_idx + 1) % len(pf_players)
+        print(pf_cards)
+        print(pf_deck)
+        return jsonify({"status": "success"})
+        

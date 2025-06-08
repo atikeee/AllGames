@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Panchforon Play</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        .label { font-size: 1.5rem; margin: 10px; }
+        #word { font-size: 2rem; margin: 20px; display: none; }
+        button { font-size: 1.2rem; padding: 10px 20px; margin: 10px; }
+        #timer { font-weight: bold; color: darkred; }
+    </style>
+</head>
+<body>
+    <h2>Panchforon Play</h2>
+    <div class="label">Level: <span id="gameLevel">{{ level }}</span></div>
+    <div class="label">Player: <span id="playerName">{{ player }}</span></div>
+    <div class="label">Timer: <span id="timer">{{ timer }}</span></div>
+
+    <div id="word"></div>
+
+    <button onclick="toggleStartPause()" id="startPauseBtn">Start</button>
+    <button onclick="skipWord()" id="skipBtn" disabled>Skip</button>
+    <button onclick="saveWord()" id="saveBtn" disabled>Save</button>
+    <button onclick="nextLevel()" id="nextLevelBtn" disabled>Next Level</button>
+    <button onclick="nextPlayer()" id="nextPlayerBtn" disabled>Next Player</button>
+
+    <script>
+        let pf_deck = {{ pf_deck | tojson }};
+        let timer = {{ timer }};
+        let pf_cards = {{ pf_cards | tojson }};
+        let pf_players = {{pf_players| tojson}};
+        let pf_player_idx = {{pf_player_idx}};
+        const gameLevel = {{ level }};
+        const currentPlayer = pf_players[pf_player_idx];
+        let currentIndex = {{ pf_word_idx }};
+        
+        let timerInterval = null;
+        let paused = true;
+
+        function toggleStartPause() {
+            if(!checkDeckEmpty())
+            {
+                if (paused) {
+                document.getElementById("word").style.display = "block";
+                startTimer();
+                paused = false;
+                document.getElementById("startPauseBtn").textContent = "Pause";
+            } else {
+                document.getElementById("word").style.display = "none";
+                stopTimer();
+                paused = true;
+                document.getElementById("startPauseBtn").textContent = "Start";
+            }   
+            }
+            
+        }
+
+        function startTimer() {
+            document.getElementById("timer").textContent = timer;
+            
+            disable_startpause_skip_save_nxtplr_nxtlvl(false,false,false,true,true);
+            timerInterval = setInterval(() => {
+                timer--;
+                document.getElementById("timer").textContent = timer;
+                if (timer <= 0) {
+                    stopTimer();
+                    disable_startpause_skip_save_nxtplr_nxtlvl(true,true,true,false,true);
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        
+        function skipWord() {
+            if (pf_deck.length === 0) return;
+            currentIndex = (currentIndex + 1) % pf_deck.length;
+            document.getElementById("word").textContent = pf_deck[currentIndex];
+            checkDeckEmpty();
+        }
+
+        function saveWord() {
+            const word = pf_deck[currentIndex];
+            if (!pf_cards[currentPlayer]) {
+                pf_cards[currentPlayer] = [];
+            }
+            pf_cards[currentPlayer].push(word);
+            pf_deck.splice(currentIndex, 1);
+            if (pf_deck.length > 0) {
+                currentIndex = currentIndex % pf_deck.length;
+                document.getElementById("word").textContent = pf_deck[currentIndex];
+            } else {
+                document.getElementById("word").textContent = "";
+            }
+            checkDeckEmpty();
+        }
+
+        function checkDeckEmpty() {
+            if (pf_deck.length === 0) {
+                disable_startpause_skip_save_nxtplr_nxtlvl(true,true,true,true,false);
+                return true;
+            }
+            return false;
+        }
+
+        function nextPlayer() {
+            disable_startpause_skip_save_nxtplr_nxtlvl(false,true,true,true,true);
+            checkDeckEmpty();
+            timer = {{ timer }};  // reset timer from backend
+            paused = true;
+            document.getElementById("timer").textContent = timer;
+            document.getElementById("startPauseBtn").textContent = "Start";
+            document.getElementById("word").style.display = "none";
+            document.getElementById("playerName").textContent = currentPlayer;
+            fetch("/panchforon/next_player", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    pf_cards: pf_cards,
+                    pf_deck: pf_deck
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Saved to server:", data);
+            })
+            .then(() => location.reload())
+            .catch(error => {
+                console.error("Error saving to server:", error);
+            });
+        }
+
+        function nextLevel() {
+            alert("Next level logic to be implemented.");
+        }
+
+        window.onload = () => {
+            
+            document.getElementById("gameLevel").textContent = gameLevel;
+            document.getElementById("playerName").textContent = currentPlayer;
+            document.getElementById("word").textContent = pf_deck[currentIndex];
+        }
+
+        function disable_startpause_skip_save_nxtplr_nxtlvl(d1,d2,d3,d4,d5)
+        {
+            document.getElementById("startPauseBtn").disabled = d1;
+            document.getElementById("skipBtn").disabled = d2;
+            document.getElementById("saveBtn").disabled = d3;
+            document.getElementById("nextPlayerBtn").disabled = d4;
+            document.getElementById("nextLevelBtn").disabled = d5;
+        }
+    </script>
+</body>
+</html>

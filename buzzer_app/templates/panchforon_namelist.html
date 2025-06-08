@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Panchforon - Name List</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+        input[type="text"] { padding: 10px; width: 70%; font-size: 1rem; }
+        button { padding: 10px 15px; font-size: 1rem; margin: 5px; }
+        ul { list-style: none; padding: 0; }
+        li { margin: 5px 0; display: flex; justify-content: space-between; align-items: center; }
+        .delete-btn { cursor: pointer; color: red; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Panchforon - Player Setup</h2>
+
+    <form method="POST">
+        <input type="text" name="player" placeholder="Enter player name">
+        <button type="submit" name="action" value="add">Add Player</button>
+        <button type="submit" name="action" value="clear">Clear All</button>
+        <button type="submit" name="action" value="randomize">Randomize</button>
+        <button type="submit" name="action" value="start">Start New Game</button>
+    </form>
+
+    <h3>Players</h3>
+    <ul>
+        {% for name in pf_players %}
+        <li>
+            {{ name }}
+            <form method="POST" style="display:inline;">
+                <input type="hidden" name="name_to_del" value="{{ name }}">
+                <button type="submit" name="action" value="delete" class="delete-btn">🗑</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

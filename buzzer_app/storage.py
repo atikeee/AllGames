@@ -9,3 +9,12 @@ current_game = {
     'revealed': set(),  # store indices of revealed words
     'team': 'red',
 }
+
+pf_players = []
+pf_cards = {} # empty list for each player. 
+pf_deck = []
+pf_timer = [5,5,5] #seconds for different levels. 
+pf_level = 1
+pf_player_idx = 0
+pf_word_idx = 0
+pf_results = {} # list of 3 for each player. 
