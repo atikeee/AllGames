@@ -377,7 +377,7 @@ def configure_routes(app,socketio):
         
         timer_value = pf_timer[pf_level-1]
         return render_template("play.html",
-                           level=pf_level,
+                           pf_level=pf_level,
                            pf_players=pf_players,
                            pf_player_idx=pf_player_idx,
                            timer=timer_value,
@@ -396,7 +396,55 @@ def configure_routes(app,socketio):
         pf_deck = data.get("pf_deck", [])
 
         pf_player_idx = (pf_player_idx + 1) % len(pf_players)
-        print(pf_cards)
-        print(pf_deck)
+        socketio.emit("update_progress")
+
         return jsonify({"status": "success"})
         
+    @app.route("/panchforon/next_level", methods=["POST"])
+    def panchforon_next_level():
+        global pf_players, pf_deck, pf_level,pf_cards, pf_word_idx
+        print("before pf players",pf_players);
+        print("before pf decks",pf_deck);
+        print("before pf cards",pf_cards);
+        pf_word_idx = 0
+        # 1. Clear pf_players
+        all_words = []
+        for player in pf_players:
+            if(player in pf_cards):
+                all_words.extend(pf_cards[player])  # Combine all words
+        pf_deck = all_words
+
+        pf_cards.clear()  # Clear player dictionary
+
+        # 2. Increment pf_level
+        pf_level += 1
+        print("after pf players",pf_players);
+        print("after pf decks",pf_deck);
+        print("affore pf cards",pf_cards);
+        socketio.emit("update_result")
+
+        return jsonify({"status": "ok", "pf_level": pf_level, "pf_deck": pf_deck})
+    @app.route("/panchforon/status")
+    def panchforon_status():
+        
+        
+        # Progress Table: transpose words into columns
+        max_len = max((len(v) for v in pf_cards.values()), default=0)
+        progress_rows = []
+        for i in range(max_len):
+            row = []
+            for player in pf_players:
+                row.append(pf_cards.get(player, [])[i] if i < len(pf_cards.get(player, [])) else "")
+            progress_rows.append(row)
+
+        # Result Table
+        result_data = {p: [0, 0, 0, 0] for p in pf_players}  # [lvl1, lvl2, lvl3, total]
+        for player, words in pf_cards.items():
+            for word in words:
+                result_data[player][pf_level - 1] += 1  # count current level
+            result_data[player][3] = sum(result_data[player][:3])
+
+        return render_template("status.html",
+                            players=pf_players,
+                            progress_rows=progress_rows,
+                            result_data=result_data)

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Status</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+        table, th, td {
+            border: 1px solid black; border-collapse: collapse;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Status Page</h2>
+
+    <h3>Progress Table</h3>
+    <table id="progressTable">
+        <thead>
+            <tr>
+                {% for player in players %}
+                    <th>{{ player }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody id="progressBody">
+            {% for row in progress_rows %}
+            <tr>
+                {% for cell in row %}
+                    <td>{{ cell }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Result Table</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Level 1</th>
+                <th>Level 2</th>
+                <th>Level 3</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody id="resultTable">
+            {% for player in players %}
+                <tr>
+                    <td>{{ player }}</td>
+                    {% for score in result_data[player] %}
+                        <td>{{ score }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        const socket = io();
+        socket.on("update_progress", () => {
+            location.reload();
+        });
+        socket.on("update_result", () => {
+            location.reload();
+        });
+    </script>
+</body>
+</html>

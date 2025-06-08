@@ -12,7 +12,7 @@
 </head>
 <body>
     <h2>Panchforon Play</h2>
-    <div class="label">Level: <span id="gameLevel">{{ level }}</span></div>
+    <div class="label">Level: <span id="gameLevel">{{ pf_level }}</span></div>
     <div class="label">Player: <span id="playerName">{{ player }}</span></div>
     <div class="label">Timer: <span id="timer">{{ timer }}</span></div>
 
@@ -30,7 +30,7 @@
         let pf_cards = {{ pf_cards | tojson }};
         let pf_players = {{pf_players| tojson}};
         let pf_player_idx = {{pf_player_idx}};
-        const gameLevel = {{ level }};
+        
         const currentPlayer = pf_players[pf_player_idx];
         let currentIndex = {{ pf_word_idx }};
         
@@ -135,12 +135,24 @@
         }
 
         function nextLevel() {
-            alert("Next level logic to be implemented.");
+            fetch("/panchforon/next_level", {
+                method: "POST"
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "max_level") {
+                    document.getElementById("nextLevelBtn").disabled = true;
+                    alert("You have reached the maximum level.");
+                } else {
+                    // Optional: Reload page or update DOM
+                    location.reload();
+                }
+            })
+            .catch(error => console.error("Next level error:", error));
         }
 
+
         window.onload = () => {
-            
-            document.getElementById("gameLevel").textContent = gameLevel;
             document.getElementById("playerName").textContent = currentPlayer;
             document.getElementById("word").textContent = pf_deck[currentIndex];
         }
