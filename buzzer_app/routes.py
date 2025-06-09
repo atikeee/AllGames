@@ -402,11 +402,14 @@ def configure_routes(app,socketio):
         
     @app.route("/panchforon/next_level", methods=["POST"])
     def panchforon_next_level():
-        global pf_players, pf_deck, pf_level,pf_cards, pf_word_idx
-        print("before pf players",pf_players);
-        print("before pf decks",pf_deck);
-        print("before pf cards",pf_cards);
+        global pf_players, pf_deck, pf_level,pf_cards, pf_word_idx,pf_score
         pf_word_idx = 0
+        for player in pf_players:
+            if player not in pf_score:
+                pf_score[player] = [0, 0, 0]
+            words = pf_cards.get(player, [])
+            pf_score[player][pf_level - 1] = len(words)
+
         # 1. Clear pf_players
         all_words = []
         for player in pf_players:
@@ -418,9 +421,6 @@ def configure_routes(app,socketio):
 
         # 2. Increment pf_level
         pf_level += 1
-        print("after pf players",pf_players);
-        print("after pf decks",pf_deck);
-        print("affore pf cards",pf_cards);
         socketio.emit("update_result")
 
         return jsonify({"status": "ok", "pf_level": pf_level, "pf_deck": pf_deck})
@@ -437,12 +437,12 @@ def configure_routes(app,socketio):
                 row.append(pf_cards.get(player, [])[i] if i < len(pf_cards.get(player, [])) else "")
             progress_rows.append(row)
 
-        # Result Table
-        result_data = {p: [0, 0, 0, 0] for p in pf_players}  # [lvl1, lvl2, lvl3, total]
-        for player, words in pf_cards.items():
-            for word in words:
-                result_data[player][pf_level - 1] += 1  # count current level
-            result_data[player][3] = sum(result_data[player][:3])
+        # Result Table from pf_score
+        result_data = {}
+        for player in pf_players:
+            level_scores = pf_score.get(player, [0, 0, 0])
+            total = sum(level_scores)
+            result_data[player] = level_scores + [total]
 
         return render_template("status.html",
                             players=pf_players,

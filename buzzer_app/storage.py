@@ -17,4 +17,4 @@ pf_timer = [5,5,5] #seconds for different levels.
 pf_level = 1
 pf_player_idx = 0
 pf_word_idx = 0
-pf_results = {} # list of 3 for each player. 
+pf_score = {} # list of 3 for each player. 
