@@ -7,6 +7,9 @@
     <style>
         body { padding: 2rem; text-align: center; }
         iframe { margin-top: 1rem; }
+        .progress {
+        pointer-events: none; /* Disable user interaction */
+    }
     </style>
 </head>
 <body>
@@ -15,6 +18,12 @@
         <button class="btn btn-success" onclick="playSegment()">▶️ Play</button>
         <button class="btn btn-danger" onclick="pauseVideo()">⏸️ Pause</button>
     </div>
+    <div class="progress my-4" style="height: 25px; max-width: 600px; margin: auto;">
+        <div id="progressBar" class="progress-bar progress-bar-striped bg-info" role="progressbar"
+             style="width: 0%; font-weight: bold;">0:00
+        </div>
+    </div>
+    
 
     <div class="mt-2">
         <a href="/guesstune?clip={{ clip_index - 1 }}&seg=0" class="btn btn-secondary {% if clip_index == 0 %}disabled{% endif %}">⬅️ Prev Clip</a>
@@ -44,6 +53,7 @@
             if (player) {
                 player.seekTo({{ start }});
                 player.playVideo();
+                updateProgressBar();
                 clearTimeout(timer);
                 timer = setTimeout(() => {
                     player.pauseVideo();
@@ -57,6 +67,24 @@
                 clearTimeout(timer);
             }
         }
+        let progressInterval;
+
+        function updateProgressBar() {
+            const duration = {{ end }} - {{ start }};
+            const bar = document.getElementById("progressBar");
+
+            clearInterval(progressInterval);
+            progressInterval = setInterval(() => {
+                if (player && player.getCurrentTime) {
+                    const current = player.getCurrentTime() - {{ start }};
+                    const percent = Math.min((current / duration) * 100, 100);
+                    const seconds = Math.max(0, Math.floor(current));
+                    bar.style.width = percent + "%";
+                    bar.textContent = "0:" + String(seconds).padStart(2, '0');
+                }
+            }, 500);
+        }
+
     </script>
 
     <!-- Hidden YouTube iframe (not shown) -->

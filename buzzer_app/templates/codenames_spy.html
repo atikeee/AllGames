@@ -58,6 +58,16 @@
     </style>
 </head>
 <body>
+    {% if access_denied %}
+        <h2 style="color: red; text-align: center;">Access Denied. Incorrect password.</h2>
+    {% elif require_password %}
+        <form method="post" action="/codenames_spy" style="text-align: center; margin-top: 50px;">
+            <label for="spy_password">Enter Spy Password:</label>
+            <input type="password" name="spy_password" required>
+            <button type="submit">Submit</button>
+        </form>
+        </body>
+    {% else %}
     <h2 style="text-align:center">Codenames Spy</h2>
 
     <form method="post" onsubmit="return validateForm()">
@@ -90,6 +100,7 @@
             </div>
         {% endfor %}
     </div>
+    {% endif %}
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
     const socket = io();

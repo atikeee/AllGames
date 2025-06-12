@@ -1,5 +1,5 @@
 import pandas as pd
-from flask import request, render_template, redirect, abort, send_from_directory, make_response,url_for,jsonify
+from flask import request, render_template, redirect, abort, send_from_directory, make_response,url_for,jsonify,session
 from datetime import datetime
 from storage import *
 import csv, os, re
@@ -272,8 +272,8 @@ def configure_routes(app,socketio):
             revealed=current_game.get('revealed', set()),  # ✅ Add this line
             winner=current_game.get('winner')
         )
-    @app.route("/codenames_spy", methods=["GET", "POST"])
-    def codenames_spy():
+    @app.route("/codenames_spy2", methods=["GET", "POST"])
+    def codenames_spy2():
         global hint_log
 
         if not current_game['words']:  # fallback safety
@@ -295,9 +295,42 @@ def configure_routes(app,socketio):
             zip=zip
         )
 
+    @app.route("/codenames_spy", methods=["GET", "POST"])
+    def codenames_spy():
+        global hint_log
+        print("password:::")
+        print(codenames_spy_password)
+        if request.method == "POST" and 'spy_password' in request.form:
+            submitted_password = request.form.get("spy_password")
+            if submitted_password == codenames_spy_password:
+                session['spy_authenticated'] = True
+            else:
+                return render_template("codenames_spy.html", access_denied=True)
+
+        if not session.get('spy_authenticated'):
+            return render_template("codenames_spy.html", require_password=True)
+
+        if not current_game['words']:
+            return redirect(url_for('start_codenames'))
+
+        if request.method == "POST" and 'hint' in request.form:
+            hint = request.form.get("hint")
+            count = request.form.get("count")
+            hint_log.append([current_game['team'], hint, count])
+            current_game['team'] = "blue" if current_game['team'] == "red" else "red"
+            if hint:
+                socketio.emit('new_hint', {'hint': hint, 'count': count})
+
+        return render_template("codenames_spy.html",
+                            words=current_game['words'],
+                            colors=current_game['colors'],
+                            hint_log=hint_log,
+                            current_team=current_game['team'],
+                            zip=zip)
     @app.route("/start_codenames")
     def start_codenames():
         global hint_log
+        session.pop('spy_authenticated', None)
         word_file = 'words.txt'
         with open(word_file) as f:
             all_words = [line.strip() for line in f if line.strip()]
@@ -313,7 +346,7 @@ def configure_routes(app,socketio):
         current_game['winner'] = None
         hint_log.clear()
         socketio.emit("new_game")
-        return redirect(url_for('codenames'))
+        return redirect(url_for('set_password'))
     
     @app.route("/reveal/<int:index>", methods=["POST"])
     def reveal_word(index):
@@ -333,6 +366,15 @@ def configure_routes(app,socketio):
         return jsonify({"winner": winner})
         #return redirect(url_for('codenames'))
         #return '', 204  # no content
+    @app.route("/set_password", methods=["GET", "POST"])
+    def set_password():
+        global codenames_spy_password
+        if request.method == "POST":
+            password = request.form.get("password")
+            if password:
+                codenames_spy_password = password
+                return redirect(url_for("codenames"))  # or any page you want
+        return render_template("set_password.html")
     @app.route("/panchforon/namelist", methods=["GET", "POST"])
     def panchforon_namelist():
         global pf_players, pf_deck
