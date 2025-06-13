@@ -378,7 +378,7 @@ def configure_routes(app,socketio):
         return render_template("set_password.html")
     @app.route("/panchforon/namelist", methods=["GET", "POST"])
     def panchforon_namelist():
-        global pf_players, pf_deck
+        global pf_players, pf_deck,pf_level,pf_score
         pf_words_file = 'pf_words.txt'
 
         message = ""
@@ -404,6 +404,8 @@ def configure_routes(app,socketio):
             elif action == "start":
                 try:
                     pf_level=1
+                    for player in pf_players:
+                        pf_score[player] = [0,0,0]
                     with open(pf_words_file , encoding="utf-8") as f:
                         words = [line.strip() for line in f if line.strip()]
                     pf_deck = random.sample(words, len(pf_players) * 3)  # example multiplier
@@ -420,7 +422,10 @@ def configure_routes(app,socketio):
 
         if(pf_level>3):
             return redirect(url_for('panchforon_status'))
+        print("pfdeck",pf_deck)
+        print("pfcard",pf_cards)
         timer_value = pf_timer[pf_level-1]
+
         return render_template("play.html",
                            pf_level=pf_level,
                            pf_players=pf_players,

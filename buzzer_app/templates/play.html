@@ -9,7 +9,7 @@
         background-color: #f2f2f2;
     }
 
-    h2 {
+    h1 {
         text-align: center;
         margin-bottom: 20px;
     }
@@ -118,7 +118,7 @@
 
 </head>
 <body>
-    <h2>Panchforon Play</h2>
+    <h1>Play</h1>
     <div class="top-bar">
         <div class="left-top">
             <button onclick="toggleStartPause()" id="startPauseBtn">Start</button>
@@ -157,7 +157,7 @@
             if(!checkDeckEmpty())
             {
                 if (paused) {
-                //document.getElementById("word").style.display = "block";
+                
                 document.getElementById("cardBox").classList.remove("hidden");
 
                 startTimer();
@@ -166,7 +166,7 @@
             } else {
                 document.getElementById("cardBox").classList.add("hidden");
 
-                //document.getElementById("word").style.display = "none";
+                
                 stopTimer();
                 paused = true;
                 document.getElementById("startPauseBtn").textContent = "Start";
@@ -197,7 +197,7 @@
         function skipWord() {
             if (pf_deck.length === 0) return;
             currentIndex = (currentIndex + 1) % pf_deck.length;
-            document.getElementById("word").textContent = pf_deck[currentIndex];
+            document.getElementById("cardBox").textContent = pf_deck[currentIndex];
             checkDeckEmpty();
         }
 
@@ -233,7 +233,7 @@
             paused = true;
             document.getElementById("timer").textContent = timer;
             document.getElementById("startPauseBtn").textContent = "Start";
-            document.getElementById("word").style.display = "none";
+            document.getElementById("cardBox").style.display = "none";
             document.getElementById("playerName").textContent = currentPlayer;
             fetch("/panchforon/next_player", {
                 method: "POST",
@@ -275,7 +275,7 @@
 
         window.onload = () => {
             document.getElementById("playerName").textContent = currentPlayer;
-            document.getElementById("word").textContent = pf_deck[currentIndex];
+            document.getElementById("cardBox").textContent = pf_deck[currentIndex];
         }
 
         function disable_startpause_skip_save_nxtplr_nxtlvl(d1,d2,d3,d4,d5)
