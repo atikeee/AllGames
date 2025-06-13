@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pandas as pd
 from flask import request, render_template, redirect, abort, send_from_directory, make_response,url_for,jsonify,session
 from datetime import datetime
@@ -402,7 +403,8 @@ def configure_routes(app,socketio):
                 random.shuffle(pf_players)
             elif action == "start":
                 try:
-                    with open(pf_words_file) as f:
+                    pf_level=1
+                    with open(pf_words_file , encoding="utf-8") as f:
                         words = [line.strip() for line in f if line.strip()]
                     pf_deck = random.sample(words, len(pf_players) * 3)  # example multiplier
                     
@@ -416,7 +418,8 @@ def configure_routes(app,socketio):
         if not pf_players:
             return redirect(url_for('panchforon_namelist'))  # fallback if no players or deck
 
-        
+        if(pf_level>3):
+            return redirect(url_for('panchforon_status'))
         timer_value = pf_timer[pf_level-1]
         return render_template("play.html",
                            pf_level=pf_level,
@@ -445,27 +448,31 @@ def configure_routes(app,socketio):
     @app.route("/panchforon/next_level", methods=["POST"])
     def panchforon_next_level():
         global pf_players, pf_deck, pf_level,pf_cards, pf_word_idx,pf_score
-        pf_word_idx = 0
-        for player in pf_players:
-            if player not in pf_score:
-                pf_score[player] = [0, 0, 0]
-            words = pf_cards.get(player, [])
-            pf_score[player][pf_level - 1] = len(words)
+        if(pf_level<4):
+            pf_word_idx = 0
+            for player in pf_players:
+                if player not in pf_score:
+                    pf_score[player] = [0, 0, 0]
+                words = pf_cards.get(player, [])
+                pf_score[player][pf_level - 1] = len(words)
 
-        # 1. Clear pf_players
-        all_words = []
-        for player in pf_players:
-            if(player in pf_cards):
-                all_words.extend(pf_cards[player])  # Combine all words
-        pf_deck = all_words
+            # 1. Clear pf_players
+            all_words = []
+            for player in pf_players:
+                if(player in pf_cards):
+                    all_words.extend(pf_cards[player])  # Combine all words
+            pf_deck = all_words
 
-        pf_cards.clear()  # Clear player dictionary
+            pf_cards.clear()  # Clear player dictionary
 
-        # 2. Increment pf_level
-        pf_level += 1
-        socketio.emit("update_result")
+            # 2. Increment pf_level
+            socketio.emit("update_result")
+            pf_level += 1
+            return jsonify({"status": "ok", "pf_level": pf_level, "pf_deck": pf_deck})
+        else:
+            return redirect(url_for('panchforon_status'))
 
-        return jsonify({"status": "ok", "pf_level": pf_level, "pf_deck": pf_deck})
+
     @app.route("/panchforon/status")
     def panchforon_status():
         

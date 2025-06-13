@@ -3,26 +3,142 @@
 <head>
     <title>Panchforon Play</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        .label { font-size: 1.5rem; margin: 10px; }
-        #word { font-size: 2rem; margin: 20px; display: none; }
-        button { font-size: 1.2rem; padding: 10px 20px; margin: 10px; }
-        #timer { font-weight: bold; color: darkred; }
-    </style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f2f2f2;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .left-top {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .label-box {
+        font-size: 1.2rem;
+        padding: 10px 15px;
+        background-color: #ffffff;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+    }
+
+    .label-box .icon {
+        margin-right: 8px;
+    }
+
+    .right-top {
+        display: flex;
+        gap: 10px;
+    }
+
+    #playerName {
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 20px auto;
+        text-align: center;
+        color: #333;
+    }
+
+    #cardBox {
+        width: 300px;
+        height: 150px;
+        background-color: #fff;
+        border: 2px solid #ccc;
+        border-radius: 12px;
+        margin: 20px auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    #cardBox.hidden {
+        background-color: #e0e0e0;
+        color: transparent;
+    }
+
+    .button-bar {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    button {
+        font-size: 1.2rem;
+        padding: 12px 25px;
+        margin: 10px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        background-color: #e0e0e0;
+        color: #999;
+        border: 2px dashed #bbb;
+        cursor: not-allowed;
+        opacity: 0.4;
+    }
+    button:disabled:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+
+
+    #startPauseBtn {
+        background-color: #3498db;
+        color: white;
+    }
+
+    #skipBtn, #saveBtn {
+        background-color: #2ecc71;
+        color: white;
+    }
+
+    #nextLevelBtn, #nextPlayerBtn {
+        background-color: #f39c12;
+        color: white;
+    }
+</style>
+
 </head>
 <body>
     <h2>Panchforon Play</h2>
-    <div class="label">Level: <span id="gameLevel">{{ pf_level }}</span></div>
-    <div class="label">Player: <span id="playerName">{{ player }}</span></div>
-    <div class="label">Timer: <span id="timer">{{ timer }}</span></div>
-
-    <div id="word"></div>
-
-    <button onclick="toggleStartPause()" id="startPauseBtn">Start</button>
-    <button onclick="skipWord()" id="skipBtn" disabled>Skip</button>
-    <button onclick="saveWord()" id="saveBtn" disabled>Save</button>
-    <button onclick="nextLevel()" id="nextLevelBtn" disabled>Next Level</button>
-    <button onclick="nextPlayer()" id="nextPlayerBtn" disabled>Next Player</button>
+    <div class="top-bar">
+        <div class="left-top">
+            <button onclick="toggleStartPause()" id="startPauseBtn">Start</button>
+            <div class="label-box"><span class="icon">🎮</span>Level: <span id="gameLevel">{{ pf_level }}</span></div>
+            <div class="label-box"><span class="icon">⏰</span><span id="timer">{{ timer }}</span>s</div>
+        </div>
+        <div class="right-top">
+            <button onclick="nextPlayer()" id="nextPlayerBtn" disabled>Next Player</button>
+            <button onclick="nextLevel()" id="nextLevelBtn" disabled>Next Level</button>
+        </div>
+    </div>
+    
+    <div id="playerName">{{ player }}</div>
+    
+    <div id="cardBox" class="hidden"></div>
+    
+    <div class="button-bar">
+        <button onclick="skipWord()" id="skipBtn" disabled>Skip</button>
+        <button onclick="saveWord()" id="saveBtn" disabled>Save</button>
+    </div>
 
     <script>
         let pf_deck = {{ pf_deck | tojson }};
@@ -41,12 +157,16 @@
             if(!checkDeckEmpty())
             {
                 if (paused) {
-                document.getElementById("word").style.display = "block";
+                //document.getElementById("word").style.display = "block";
+                document.getElementById("cardBox").classList.remove("hidden");
+
                 startTimer();
                 paused = false;
                 document.getElementById("startPauseBtn").textContent = "Pause";
             } else {
-                document.getElementById("word").style.display = "none";
+                document.getElementById("cardBox").classList.add("hidden");
+
+                //document.getElementById("word").style.display = "none";
                 stopTimer();
                 paused = true;
                 document.getElementById("startPauseBtn").textContent = "Start";
@@ -90,9 +210,10 @@
             pf_deck.splice(currentIndex, 1);
             if (pf_deck.length > 0) {
                 currentIndex = currentIndex % pf_deck.length;
-                document.getElementById("word").textContent = pf_deck[currentIndex];
+                document.getElementById("cardBox").textContent = pf_deck[currentIndex];
+
             } else {
-                document.getElementById("word").textContent = "";
+                document.getElementById("cardBox").textContent = "";
             }
             checkDeckEmpty();
         }
