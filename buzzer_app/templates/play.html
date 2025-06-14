@@ -127,6 +127,8 @@
         </div>
         <div class="right-top">
             <button onclick="nextPlayer()" id="nextPlayerBtn" disabled>Next Player</button>
+            
+
             <button onclick="nextLevel()" id="nextLevelBtn" disabled>Next Level</button>
         </div>
     </div>
@@ -146,6 +148,8 @@
         let pf_cards = {{ pf_cards | tojson }};
         let pf_players = {{pf_players| tojson}};
         let pf_player_idx = {{pf_player_idx}};
+        let pf_cur_savedwords = {{pf_cur_savedwords|tojson}};
+        let pf_cur_skippedwords = {{pf_cur_skippedwords|tojson}};
         
         const currentPlayer = pf_players[pf_player_idx];
         let currentIndex = {{ pf_word_idx }};
@@ -196,9 +200,20 @@
         
         function skipWord() {
             if (pf_deck.length === 0) return;
+            const word = pf_deck[currentIndex];
             currentIndex = (currentIndex + 1) % pf_deck.length;
             document.getElementById("cardBox").textContent = pf_deck[currentIndex];
-            checkDeckEmpty();
+            fetch("/panchforon/review_skip", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    skipped_word: word
+                })
+                }).catch(error => {
+                    console.error("Error sending data to server:", error);
+                });
         }
 
         function saveWord() {
@@ -216,6 +231,17 @@
                 document.getElementById("cardBox").textContent = "";
             }
             checkDeckEmpty();
+            fetch("/panchforon/review_save", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    saved_word: word
+                })
+                }).catch(error => {
+                    console.error("Error sending data to server:", error);
+                });
         }
 
         function checkDeckEmpty() {
@@ -227,6 +253,7 @@
         }
 
         function nextPlayer() {
+            
             disable_startpause_skip_save_nxtplr_nxtlvl(false,true,true,true,true);
             checkDeckEmpty();
             timer = {{ timer }};  // reset timer from backend
@@ -235,24 +262,28 @@
             document.getElementById("startPauseBtn").textContent = "Start";
             document.getElementById("cardBox").style.display = "none";
             document.getElementById("playerName").textContent = currentPlayer;
-            fetch("/panchforon/next_player", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    pf_cards: pf_cards,
-                    pf_deck: pf_deck
-                })
+            fetch("/panchforon/review", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                pf_cur_skippedwords: pf_cur_skippedwords,
+                pf_cur_savedwords: pf_cur_savedwords
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Saved to server:", data);
-            })
-            .then(() => location.reload())
-            .catch(error => {
-                console.error("Error saving to server:", error);
-            });
+        })
+        .then(response => {
+            if (response.ok) {
+                // ✅ Redirect to the review page
+                window.location.href = "/panchforon/review";
+            } else {
+                console.error("Server returned an error:", response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error("Error saving to server:", error);
+        });
+
         }
 
         function nextLevel() {
