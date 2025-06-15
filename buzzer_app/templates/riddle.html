@@ -67,6 +67,7 @@
     align-items: center;
     font-size: 24px;
     color: white;
+    text-align: left;
     }
 
     .front {
@@ -112,15 +113,20 @@
   <div class="header">
     <button class="hint-btn" onclick="showHint()">?</button>
     <h2>🧠 Riddle Cards</h2>
-    <div id="hintBox" class="hint-box"><strong>Hint:</strong> {{ data.hint }}</div>
+    
+    <div id="hintBox" class="hint-box"><strong>Hint:</strong> {{ data.hint.replace('\n', '<br>')|safe }}</div>
   </div>
 
   <div class="card-container" >
     <div id="riddleCard" class="card" onclick="flipCard()">
-      <div class="card-inner front">{{ data.question }}</div>
-      <div class="card-inner back">{{ data.answer }}</div>
+      
+      <div class="card-inner front">{{ data.question.replace('\n', '<br>')|safe }}</div>
+      
+      <div class="card-inner back">{{ data.answer.replace('\n', '<br>')|safe }}</div>
     </div>
   </div>
+
+  
 
   <div class="nav-buttons">
     <a href="{{ url_for('riddle', index=data.index - 1) }}">

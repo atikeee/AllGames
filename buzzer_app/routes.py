@@ -230,7 +230,7 @@ def configure_routes(app,socketio):
         index = max(0, min(index, len(files) - 1))
 
         with open(files[index], 'r', encoding='utf-8') as f:
-            parts = f.read().split("###")
+            parts = f.read().split("***")
             question = parts[0].strip() if len(parts) > 0 else ""
             answer = parts[1].strip() if len(parts) > 1 else ""
             hint = parts[2].strip() if len(parts) > 2 else ""
@@ -345,14 +345,21 @@ def configure_routes(app,socketio):
     def start_codenames():
         global hint_log
         session.pop('spy_authenticated', None)
-        word_file = 'words.txt'
-        with open(word_file) as f:
-            all_words = [line.strip() for line in f if line.strip()]
-        selected_words = random.sample(all_words, 25)
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        word_folder = os.path.join(base_dir, 'codename-words')
+        all_words = []
 
+        for filename in os.listdir(word_folder):
+            if filename.endswith(".txt"):
+                with open(os.path.join(word_folder, filename), encoding='utf-8') as f:
+                    for line in f:
+                        word = line.strip()
+                        if word and re.match(r'^[a-zA-Z]', word):  # Only lines starting with letters
+                            all_words.append(word)
+        print("Total words read: ",len(all_words))
+        selected_words = random.sample(all_words, 25)
         color_list = ['red'] * 9 + ['blue'] * 8 + ['black'] + ['gray'] * 7
         random.shuffle(color_list)
-
         current_game['words'] = selected_words
         current_game['colors'] = color_list
         current_game['revealed'] = set()
