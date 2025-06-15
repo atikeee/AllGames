@@ -197,7 +197,6 @@ def configure_routes(app,socketio):
             random.shuffle(images)
 
         return render_template("photopair.html", m=m, n=n, delay=delay, images=images)
-    from flask import send_from_directory
 
     @app.route('/photopair_images/<filename>')
     def photopair_image(filename):
@@ -245,24 +244,32 @@ def configure_routes(app,socketio):
         }
 
         return render_template("riddle.html", data=data)
-    @app.route('/crack')
+    @app.route('/crack', methods=['GET'])
     def crack():
-        riddle_dir = 'riddle'
-        files = sorted(f for f in os.listdir(riddle_dir) if f.startswith('s') and f.endswith('.txt'))
+        with open("crack.txt", encoding="utf-8") as f:
+            raw_text = f.read()
 
+        lines = [line.strip() for line in raw_text.split("***") if line.strip() and not line.strip().startswith("#")]
+
+        index = int(request.args.get("index", 0))
+        index = max(0, min(index, len(lines)))
+
+        revealed = lines[:index]
+        current = lines[index] if index < len(lines) else None
+        more_left = index < len(lines) - 1
         def encode(text, mapping):
             return ''.join(mapping.get(ch.upper(), ch) for ch in text)
 
         mapping = generate_letter_mapping()
         data = []
 
-        for fname in files:
-            with open(os.path.join(riddle_dir, fname), encoding='utf-8') as f:
-                answer = f.read().strip().upper()
-                cipher = encode(answer, mapping)
-                data.append({'question': cipher, 'answer': answer})
+        for line in lines:
+            answer = line.upper()
+            cipher = encode(answer, mapping)
+            data.append({'question': cipher, 'answer': answer})
 
-        return render_template('crack.html', data=data)
+        
+        return render_template("crack.html", data=data,revealed=revealed, current=current, index=index, more_left=more_left)
     @app.route("/codenames")
     def codenames():
         last_team = hint_log[-1][0] if hint_log else "Red"
@@ -546,8 +553,10 @@ def configure_routes(app,socketio):
                 savedwords = request.form.get("savedwords",'')
                 if skippedwords:
                     pf_cur_skippedwords.remove(skippedwords)
+                    pf_cur_savedwords.append(skippedwords)
                 if savedwords:
                     pf_cur_savedwords.remove(savedwords)
+                    pf_cur_skippedwords.append(savedwords)
 
                 #print(" word", word_to_save,word_to_delete,pf_cards[current_player])
                 #if word_to_delete and (current_player in pf_cards):
@@ -585,4 +594,14 @@ def configure_routes(app,socketio):
             pf_cur_skippedwords.append(skipped_word)
             print("after skip",pf_cur_skippedwords)
         return '', 204
-              
+    @app.route('/shuffle_cards')
+    def shuffle_cards():
+        card_folder = 'cards'
+        card_files = sorted([
+            f for f in os.listdir(card_folder)
+            if f.lower().endswith(('.png', '.jpg', '.jpeg'))
+        ])
+        return render_template("shuffle_cards.html", cards=card_files)
+    @app.route('/cards/<filename>')
+    def serve_card_image(filename):
+        return send_from_directory('cards', filename)              
