@@ -612,3 +612,12 @@ def configure_routes(app,socketio):
     @app.route('/cards/<filename>')
     def serve_card_image(filename):
         return send_from_directory('cards', filename)              
+    @app.route("/playmedia")
+    def playmedia():
+        MEDIA_FOLDER = 'vdo'
+        media_files = [f for f in os.listdir(MEDIA_FOLDER) if f.lower().endswith(('.mp4', '.webm', '.ogg'))]
+        media_files.sort()
+        return render_template("playmedia.html", media_files=media_files)
+    @app.route('/vdo/<filename>')
+    def serve_vdo_files(filename):
+        return send_from_directory('vdo', filename)              
