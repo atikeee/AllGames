@@ -106,6 +106,11 @@
       background-color: #ccc;
       cursor: not-allowed;
     }
+    #buzzInfo {
+      text-transform: uppercase;
+      font-weight: bold;
+      color: #d00;
+    }
   </style>
 </head>
 <body>
@@ -116,6 +121,7 @@
     
     <div id="hintBox" class="hint-box"><strong>Hint:</strong> {{ data.hint.replace('\n', '<br>')|safe }}</div>
   </div>
+  <p id="buzzInfo" ></p>
 
   <div class="card-container" >
     <div id="riddleCard" class="card" onclick="flipCard()">
@@ -126,7 +132,6 @@
     </div>
   </div>
 
-  
 
   <div class="nav-buttons">
     <a href="{{ url_for('riddle', index=data.index - 1) }}">
@@ -146,6 +151,16 @@
       document.getElementById('hintBox').style.display = 'block';
     }
   </script>
-
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+  const socket = io();
+  socket.on("buzz_trigger", (data) => {
+      const buzzInfo = document.getElementById("buzzInfo");
+      if(buzzInfo.textContent =="")
+        buzzInfo.textContent = `${data.name}`;
+      else
+        buzzInfo.textContent += " | "+`${data.name}`;
+  });
+</script>
 </body>
 </html>

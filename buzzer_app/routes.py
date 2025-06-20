@@ -102,6 +102,7 @@ def configure_routes(app,socketio):
                 time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 message = f"Buzz from {name} recorded!"
                 buzzer_entries.append({'name': name, 'ip': ip, 'note': note, 'time': time})
+                socketio.emit('buzz_trigger',{'name':name})
                 return render_template("buzzer.html", message=message, name=name, name_locked=True, note=note)
 
         return render_template("buzzer.html", message=message, name=name_value, name_locked=name_locked, note="")
@@ -216,6 +217,12 @@ def configure_routes(app,socketio):
         data = df.iloc[index].to_dict()
         data["index"] = index
         data["total"] = len(df)
+        #data["hide_image"]=True
+        print(data)
+        #try:
+        #    hide_image = str(row[4]).strip() == "1"
+        #except IndexError:
+        hide_image = True
         return render_template("misc.html", data=data)
     @app.route('/riddle')
     def riddle():

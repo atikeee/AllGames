@@ -1,27 +1,26 @@
-image,question,hint,answer
-whatword1.jpg,What is written?,Starts with you,You Blind Bat
-mean_4g4g.png,What is written?,2 words, Forgive and forget
-mean_4gi.png,What is written?,2 words, Forget it
-mean_4h.png,What is written?,1 word, Forehead
-mean_7s.png,What is written?,location, The seven seas
-mean_ap.png,What is written?,food, Apple Pie
-mean_cr.png,What is written?,location,Cross Roads
-mean_dt.png,What is written?,location, Downtown
-mean_fa.png,What is written?,health, First Aid
-mean_fnh.png,What is written?,phrase, Needle in the haystack
-mean_ge.png,What is written?,finance state, Growing Economy
-mean_jib.png,What is written?, restaurent, Jack in the box
-mean_missun.png,What is written?,bad if you do, Misunderstood
-mean_mu.png,What is written?, find what missing, Missing You
-mean_onemil.png,What is written?,Rare thing, One in a Million
-mean_out.png,What is written?, Old days, Once upon a time
-mean_rbl.png,What is written?, 2 lines , Read between the lines
-mean_t2g.png,What is written?, Leaving ? , Time to go
-mean_tob.png,What is written?, Think wise, Think out of the box
-mean_toc.png,What is written?, Going abroad, Travel overseas
-mean_ttu.png,What is written?, you dont get it? , Try to understand
-mean_v.png,What is written?, healthy, Vegetables
-mean_wf.png,What is written?, nice place, Waterfall
+image,question,hint,answer,hide_image
+mean_4g4g.png,What is written?,2 words, Forgive and forget,0
+mean_4gi.png,What is written?,2 words, Forget it,0
+mean_4h.png,What is written?,1 word, Forehead,0
+mean_7s.png,What is written?,location, The seven seas,0
+mean_ap.png,What is written?,food, Apple Pie,0
+mean_cr.png,What is written?,location,Cross Roads,1
+mean_dt.png,What is written?,location, Downtown,0
+mean_fa.png,What is written?,health, First Aid,0
+mean_fnh.png,What is written?,phrase, Needle in the haystack,0
+mean_ge.png,What is written?,finance state, Growing Economy,0
+mean_jib.png,What is written?, restaurent, Jack in the box,0
+mean_missun.png,What is written?,bad if you do, Misunderstood,0
+mean_mu.png,What is written?, find what missing, Missing You,0
+mean_onemil.png,What is written?,Rare thing, One in a Million,0
+mean_out.png,What is written?, Old days, Once upon a time,0
+mean_rbl.png,What is written?, 2 lines , Read between the lines,0
+mean_t2g.png,What is written?, Leaving ? , Time to go,0
+mean_tob.png,What is written?, Think wise, Think out of the box,0
+mean_toc.png,What is written?, Going abroad, Travel overseas,0
+mean_ttu.png,What is written?, you dont get it? , Try to understand,0
+mean_v.png,What is written?, healthy, Vegetables,0
+mean_wf.png,What is written?, nice place, Waterfall,0
 
-q_9dot2square.png, Draw 2 circle to isolate all the dots,no hint, Draw 2 circle in 45 angle
-q_solve_connect_dots.jpg, Connect all the dots single stroke, , no solution
+q_9dot2square.png, Draw 2 circle to isolate all the dots,no hint, Draw 2 circle in 45 angle,0
+q_solve_connect_dots.jpg, Connect all the dots single stroke, , no solution,0
