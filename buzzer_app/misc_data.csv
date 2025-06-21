@@ -32,11 +32,11 @@ mean_toc.png,What is written?, Going abroad, Travel overseas,1
 mean_ttu.png,What is written?, you dont get it? , Try to understand,1
 mean_v.png,What is written?, healthy, Vegetables,1
 mean_wf.png,What is written?, nice place, Waterfall,1
-crosswords1.png, find as many words as you can (horizontal/diagonal/vertical),,so many to list,0
-crosswords2.png, find as many words as you can (horizontal/diagonal/vertical),,so many to list,0
-crosswords3.png, find as many words as you can (horizontal/diagonal/vertical),,so many to list,0
-crosswords4.png, find as many words as you can (horizontal/diagonal/vertical),,so many to list,0
-crosswords5.png, find as many words as you can (horizontal/diagonal/vertical),,so many to list,0
+crosswords1.png, find as many words as you can (horizontal/diagonal/vertical),Christmas related word,Gabriel Mary David Rome JOseph Sheep Jesus Christ Child Dove Simeon Days Old Poor Born Star Dream Flee Children Baby Egypt Rise Chosen,0
+crosswords2.png, find as many words as you can (horizontal/diagonal/vertical),Volcano related,ash dome geologist rock volcano cascades earthquake glacier washington crater erruption landslide steam crust gases plate tremor,0
+crosswords3.png, find as many words as you can (horizontal/diagonal/vertical),Grilling word,Barbecue Baste Black Buns Lighter Lunch Marinade Matches Clean Meat Coal Mesquite Cover Outside Crust Party Dinner Poultry Drips Propane Fire Pungent Fish Rack Food Sauce Fuel Sear Grate Smoke Grill Spatula Hamburger Steak Hot Tongs Wings Ignite Wood Light Yard,0
+crosswords4.png, find as many words as you can (horizontal/diagonal/vertical),Zoo,Lamb Lizard Zoo Dog Frog Farm Moose Owl ,0
+#crosswords5.png, find as many words as you can (horizontal/diagonal/vertical),,frog hog tree terrific huge tiny and crook climbed sad not green like no problems jiffy goodbye back jog in enjoy log jump carrot stood he,0
 find_1word_elephant.png, What is the word,animal,elephant,1
 find_1word_life.png, what is the word, ,Life,1
 find_1word_west.png, what is the word, , West,1
@@ -75,5 +75,5 @@ find_wordsfromimage9.jpg , find as many hidden words as you can, , , 0
 illusion_icantsleep.png, what do you see, sentence, i cant sleep,1
 illusion_panda.png, What do you see, , its a panda,0
 illusion_rock.png, What is written, hard, rock, 1
-q_9dot2square.png, Draw 2 circle to isolate all the dots,no hint, Draw 2 circle in 45 angle,0
-q_solve_connect_dots.jpg, Connect all the dots single stroke, , no solution,0
+q_9dot2square.png, Draw 2 rectangle to isolate all the dots,no hint, Draw 2 rectangle in 45 angle,0
+q_connect_dot.jpg, Connect all the dots single stroke, , no solution,0

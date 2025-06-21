@@ -130,10 +130,11 @@ def configure_routes(app,socketio):
     
     @app.route('/photoscramble', methods=['GET', 'POST'])
     def photoscramble():
-        if not is_request_from_localhost():
-            abort(403)  # Forbidden
+        #if not is_request_from_localhost():
+        #    abort(403)  # Forbidden
         photo_folder = 'photos'
         image_list = sorted([f for f in os.listdir(photo_folder) if f.lower().endswith(('png', 'jpg', 'jpeg'))])
+        #print(image_list)
         index = int(request.args.get('index', 0))
         n = int(request.form.get('grid_size', request.args.get('n', 20)))
 
@@ -212,7 +213,7 @@ def configure_routes(app,socketio):
         if not os.path.exists(csv_path):
             return "CSV file not found."
 
-        df = pd.read_csv(csv_path).fillna("")
+        df = pd.read_csv(csv_path, comment='#').fillna("")
         index = max(0, min(index, len(df) - 1))
         data = df.iloc[index].to_dict()
         data["index"] = index
