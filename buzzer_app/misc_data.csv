@@ -31,7 +31,10 @@ mean_tob.png,What is written?, Think wise, Think out of the box,1
 mean_toc.png,What is written?, Going abroad, Travel overseas,1
 mean_ttu.png,What is written?, you dont get it? , Try to understand,1
 mean_v.png,What is written?, healthy, Vegetables,1
+mean_pirat.png,What is written?, villan, Pirate,1
 mean_wf.png,What is written?, nice place, Waterfall,1
+mean_sg.png,What do you think it is?,too bright?,sun glass,1
+mean_starbucks.png,can you find this?, any other words for 2nd ? we like to go in the long trip break, starbucks,1
 crosswords1.png, find as many words as you can (horizontal/diagonal/vertical),Christmas related word,Gabriel Mary David Rome JOseph Sheep Jesus Christ Child Dove Simeon Days Old Poor Born Star Dream Flee Children Baby Egypt Rise Chosen,0
 crosswords2.png, find as many words as you can (horizontal/diagonal/vertical),Volcano related,ash dome geologist rock volcano cascades earthquake glacier washington crater erruption landslide steam crust gases plate tremor,0
 crosswords3.png, find as many words as you can (horizontal/diagonal/vertical),Grilling word,Barbecue Baste Black Buns Lighter Lunch Marinade Matches Clean Meat Coal Mesquite Cover Outside Crust Party Dinner Poultry Drips Propane Fire Pungent Fish Rack Food Sauce Fuel Sear Grate Smoke Grill Spatula Hamburger Steak Hot Tongs Wings Ignite Wood Light Yard,0
@@ -50,6 +53,7 @@ find_2word_good.png, find both words, , good/evil, 1
 find_2word_me.png, find both words, , me/you,1
 find_2word_suicide.png, find both words, one is phrase, suicide/right to die,1
 find_2word_threat.png, find both words , ,threat/pretext,1
+find_mis_598.png.png,can you find anything? ,number,598,1
 find_face1.jpg, find a face in the beans, keep looking, ,0
 find_face2.jpg, find a face in the beans, keep looking, ,0
 find_face3.jpg, find a face in the beans, keep looking, ,0
@@ -72,6 +76,23 @@ find_wordsfromimage6.jpg , find as many hidden words as you can, , , 0
 find_wordsfromimage7.jpg , find as many hidden words as you can, , , 0
 find_wordsfromimage8.jpg , find as many hidden words as you can, , , 0
 find_wordsfromimage9.jpg , find as many hidden words as you can, , , 0
+movie_12am.png, Find this hit Hollywood Movie, ,12 Angry men,0
+movie_aladin.png, Find this hit Hollywood Movie, ,Aladin,0
+movie_fg.png, Find this hit Hollywood Movie, ,Forest Gump,0
+movie_gf.png, Find this hit Hollywood Movie, ,GodFather,0
+movie_gladiator.png, Find this hit Hollywood Movie, ,Gladiator,0
+movie_gm.png, Find this hit Hollywood Movie, ,Green Mila,0
+movie_jb.png, Find this hit Hollywood Movie, ,James Bond 007,0
+movie_jw.png, Find this hit Hollywood Movie, ,Jurrasic Park,0
+movie_lor.png, Find this hit Hollywood Movie, ,Lord of the ring,0
+movie_matrix.png, Find this hit Hollywood Movie, ,Matrix,0
+movie_mi.png, Find this hit Hollywood Movie, ,Mission Impossible,0
+movie_rm.png, Find this hit Hollywood Movie, ,Rain Man,0
+movie_sm.png, Find this hit Hollywood Movie, ,Spider Man,0
+movie_sw.png, Find this hit Hollywood Movie, ,Star Wars,0
+movie_t2.png, Find this hit Hollywood Movie, ,Terminator 2,0
+movie_thor.png, Find this hit Hollywood Movie, ,Thor,0
+movie_tt.png, Find this hit Hollywood Movie, ,Titanic,0
 illusion_icantsleep.png, what do you see, sentence, i cant sleep,1
 illusion_panda.png, What do you see, , its a panda,0
 illusion_rock.png, What is written, hard, rock, 1
