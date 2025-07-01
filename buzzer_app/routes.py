@@ -609,6 +609,7 @@ def configure_routes(app,socketio):
             pf_cur_skippedwords.append(skipped_word)
             print("after skip",pf_cur_skippedwords)
         return '', 204
+        
     @app.route('/shuffle_cards')
     def shuffle_cards():
         card_folder = 'cards'
@@ -617,15 +618,34 @@ def configure_routes(app,socketio):
             if f.lower().endswith(('.png', '.jpg', '.jpeg'))
         ])
         return render_template("shuffle_cards.html", cards=card_files)
+        
     @app.route('/cards/<filename>')
     def serve_card_image(filename):
         return send_from_directory('cards', filename)              
+        
     @app.route("/playmedia")
     def playmedia():
         MEDIA_FOLDER = 'vdo'
         media_files = [f for f in os.listdir(MEDIA_FOLDER) if f.lower().endswith(('.mp4', '.webm', '.ogg'))]
         media_files.sort()
         return render_template("playmedia.html", media_files=media_files)
+        
     @app.route('/vdo/<filename>')
     def serve_vdo_files(filename):
-        return send_from_directory('vdo', filename)              
+        return send_from_directory('vdo', filename)   
+        
+    #@app.route('/leetcode/style.css')
+    #def send_style_leetcode():
+    #    return send_from_directory('templates\leetcode', 'style.css')
+    @app.route('/leetcode/<path:filename>')
+    def send_leetcode_static(filename):
+        return send_from_directory('templates/leetcode', filename)        
+    #@app.route('/leetcode/<filename>')
+    #def serve_leetcodefiles(filename):
+    #    if filename:
+    #        print("no file")
+    #        return render_template('leetcode/'+filename)
+    #    else:
+    #        print("file:" + filename)
+    #        return render_template('leetcode/index.html')
+           
