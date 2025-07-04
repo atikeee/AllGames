@@ -633,19 +633,11 @@ def configure_routes(app,socketio):
     @app.route('/vdo/<filename>')
     def serve_vdo_files(filename):
         return send_from_directory('vdo', filename)   
-        
-    #@app.route('/leetcode/style.css')
-    #def send_style_leetcode():
-    #    return send_from_directory('templates\leetcode', 'style.css')
+
     @app.route('/leetcode/<path:filename>')
     def send_leetcode_static(filename):
         return send_from_directory('templates/leetcode', filename)        
-    #@app.route('/leetcode/<filename>')
-    #def serve_leetcodefiles(filename):
-    #    if filename:
-    #        print("no file")
-    #        return render_template('leetcode/'+filename)
-    #    else:
-    #        print("file:" + filename)
-    #        return render_template('leetcode/index.html')
-           
+
+    @app.route('/links')
+    def send_links():
+        return send_from_directory('templates', 'links.html')        
